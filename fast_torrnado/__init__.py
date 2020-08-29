@@ -1,3 +1,7 @@
+"""
+description: this module provide the constants of fast_tornado.
+"""
+
 import os
 
 VERSION = 'v0.0.1'

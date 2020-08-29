@@ -1,3 +1,7 @@
+"""
+description: this module provides the function check_schema.
+"""
+
 import yaml
 
 from fast_torrnado.kernel.exceptions import TypeMismatchException
