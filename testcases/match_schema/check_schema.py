@@ -4,9 +4,9 @@ description: this module contains the testcases about check_schema.
 
 import pytest
 
-from fast_torrnado.kernel.match_schema import check_schema
+from fast_tornado.kernel.match_schema import check_schema
 
-from fast_torrnado.kernel.exceptions import TypeMismatchException
+from fast_tornado.kernel.exceptions import TypeMismatchException
 
 def test_int_type():
     """

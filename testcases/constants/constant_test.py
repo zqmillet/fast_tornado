@@ -6,8 +6,8 @@ author: qiqi
 import os
 import re
 
-from fast_torrnado import VERSION
-from fast_torrnado import ROOT
+from fast_tornado import VERSION
+from fast_tornado import ROOT
 
 def test_root():
     """

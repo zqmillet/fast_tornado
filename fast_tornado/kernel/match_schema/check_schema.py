@@ -4,7 +4,7 @@ description: this module provides the function check_schema.
 
 import yaml
 
-from fast_torrnado.kernel.exceptions import TypeMismatchException
+from fast_tornado.kernel.exceptions import TypeMismatchException
 
 TYPES = {
     'int': int,
