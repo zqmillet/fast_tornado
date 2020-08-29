@@ -6,4 +6,4 @@ python:
   - '3.8' 
 install:
       - pip install -r requirements.txt   # 安装依赖
-script: pytest testcases
+script: python -m pytest testcases
