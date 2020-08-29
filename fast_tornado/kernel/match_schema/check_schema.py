@@ -52,3 +52,6 @@ def check_schema(schema, data, name=None):
     expected_types = schema['type']
     if not isinstance(data, expected_types):
         raise TypeMismatchException(data=data, expected_types=expected_types, name='data')
+
+    if not name:
+        pass
