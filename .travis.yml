@@ -7,4 +7,4 @@ python:
 install:
       - pip install -r requirements.txt   # 安装依赖
 # script: pytest testcases && pylint fast_tornado testcases
-script: python -c "import sys; print(sys.path)"
+script: python -c "from fast_tornado import VERSION; print(VERSION)"
