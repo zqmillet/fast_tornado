@@ -5,5 +5,7 @@ python:
   - '3.7' 
   - '3.8' 
 install:
-      - pip install -r requirements.txt   # 安装依赖
-script: python -m pytest testcases && python -m pylint testcases fast_tornado
+    - pip install -r requirements.txt   # 安装依赖
+script: python -m pytest testcases --cov fast_tornado && python -m pylint testcases fast_tornado
+after_success:
+    - codecov 
