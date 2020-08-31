@@ -9,3 +9,7 @@ build:
         override:
           - py-scrutinizer-run
           - pylint-run fast_tornado
+          - command: pytest testcases --cov fast_tornado --cov-report xml
+            coverage:
+                file: .coverage
+                format: 'py-cc'
