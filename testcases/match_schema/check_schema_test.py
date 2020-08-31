@@ -15,4 +15,4 @@ def test_int_type():
     with pytest.raises(TypeMismatchException) as execution_information:
         check_schema('type: [int, str]', 1.2)
 
-    print(execution_information.value)
+    assert str(execution_information.value) == 'variable = 1.2, but its type should be int, str'
