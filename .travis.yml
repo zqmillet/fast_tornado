@@ -10,4 +10,4 @@ install:
     - pip install pytest-cov
 script: python -m pytest testcases --cov fast_tornado
 after_success:
-    - codecov 
+    - codecov -t 6b2ef30a-6603-47ff-b727-7e7dbed4ec3c
