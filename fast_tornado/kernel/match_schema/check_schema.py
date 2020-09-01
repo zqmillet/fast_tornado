@@ -11,6 +11,7 @@ TYPES = {
     'float': float,
     'str': str,
     'dict': dict,
+    'set': set,
     'list': list,
     'any': object
 }
@@ -33,7 +34,7 @@ def __initialize_type(schema):
 
     schema['type'] = types
 
-def check_schema(schema, data, name='variable'):
+def check_schema(schema, data, name='data'):
     """
     description: |
         this function is used to check whether does the data match the schema.
@@ -52,5 +53,3 @@ def check_schema(schema, data, name='variable'):
     expected_types = schema['type']
     if not isinstance(data, expected_types):
         raise TypeMismatchException(data=data, expected_types=expected_types, name=name)
-
-    
