@@ -139,3 +139,7 @@ cython_debug/
 
 # vim
 *.swp
+
+# pytest
+report.html
+*.css
