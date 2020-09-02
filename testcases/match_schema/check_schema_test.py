@@ -95,6 +95,10 @@ def test_type_match(schema, data):
         ['type: [collections.Counter]', collections.Counter(x=1, y=2)],
         ['type: [collections.OrderedDict, types.FunctionType]', collections.OrderedDict()],
         ['type: [collections.OrderedDict, types.FunctionType]', lambda x: x + 1],
+        ['type: [collections.OrderedDict, types.FunctionType, any]', 1],
+        ['type: [collections.OrderedDict, types.FunctionType, any]', dict()],
+        ['type: [collections.OrderedDict, types.FunctionType, any]', type],
+        ['type: [collections.OrderedDict, types.FunctionType, any]', dict],
     ]
 )
 def test_complex_type_match(schema, data):
@@ -109,6 +113,16 @@ def test_complex_type_match(schema, data):
             'type: types.FunctionType',
             1,
             'data = 1, but its type should be function'
+        ],
+        [
+            'type: [types.FunctionType]',
+            1,
+            'data = 1, but its type should be function'
+        ],
+        [
+            'type: [types.FunctionType, collections.OrderedDict]',
+            1,
+            'data = 1, but its type should be function, OrderedDict'
         ],
     ]
 )
