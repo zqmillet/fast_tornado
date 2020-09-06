@@ -124,6 +124,12 @@ def test_complex_type_match(schema, data):
             1,
             'data = 1, but its type should be function, OrderedDict'
         ],
+        [
+            'type: [types.FunctionType, collections.OrderedDict, dict]',
+            1,
+            'data = 1, but its type should be function, OrderedDict, dict'
+        ],
+
     ]
 )
 def test_complex_type_mismatch(schema, data, exception):
