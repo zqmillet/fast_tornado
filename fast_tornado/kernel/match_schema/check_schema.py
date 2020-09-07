@@ -6,6 +6,8 @@ import importlib
 import yaml
 
 from fast_tornado.kernel.exceptions import TypeMismatchException
+from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
+from fast_tornado.kernel.exceptions import AssertionException
 
 TYPES = {
     'int': int,
@@ -14,11 +16,12 @@ TYPES = {
     'dict': dict,
     'set': set,
     'list': list,
-    'any': object
+    'any': object,
+    'None': type(None)
 }
 
 
-def __initialize_type(type_string):
+def __load_type(type_string):
     if type_string in TYPES:
         return TYPES[type_string]
 
@@ -38,11 +41,42 @@ def __initialize_types(schema):
     types = schema.get('type', 'any')
 
     if isinstance(types, list):
-        types = tuple([__initialize_type(item) for item in types])
+        types = tuple([__load_type(item) for item in types])
     elif isinstance(types, str):
-        types = (__initialize_type(types),)
+        types = (__load_type(types),)
 
     schema['type'] = types
+
+def __initialize_assertion(schema):
+    if 'assertion' not in schema:
+        return
+
+    try:
+        schema['_assertion'] = __get_lambda_expression(schema['assertion'])
+    except InitializeLambdaExpressionException as exception:
+        raise exception
+
+def __get_lambda_expression(expression):
+    try:
+        lambda_expression = eval(expression)
+    except Exception:
+        raise InitializeLambdaExpressionException(expression) from None
+    else:
+        return lambda_expression
+
+def __check_type(data, schema, name):
+    expected_types = schema['type']
+    if not isinstance(data, expected_types):
+        raise TypeMismatchException(data=data, expected_types=expected_types, name=name)
+
+def __check_assertion(data, schema, name):
+    if '_assertion' not in schema:
+        return
+
+    if schema['_assertion'](data):
+        return
+
+    raise AssertionException(data=data, assertion=schema['assertion'], name=name)
 
 def check_schema(schema, data, name='data'):
     """
@@ -58,8 +92,9 @@ def check_schema(schema, data, name='data'):
             description: the data.
     """
     schema = yaml.safe_load(schema)
-    __initialize_types(schema)
 
-    expected_types = schema['type']
-    if not isinstance(data, expected_types):
-        raise TypeMismatchException(data=data, expected_types=expected_types, name=name)
+    __initialize_types(schema)
+    __initialize_assertion(schema)
+
+    __check_type(data, schema, name)
+    __check_assertion(data, schema, name)

@@ -21,3 +21,23 @@ class TypeMismatchException(SchemaException):
                 expected_types=', '.join(item.__name__ for item in expected_types)
             )
         )
+
+class AssertionException(SchemaException):
+    def __init__(self, data, assertion, name):
+        super().__init__(
+            '{name} = {data}, cannot pass the assertion {assertion}'.format(
+                name=name,
+                data=repr(data),
+                assertion=repr(assertion)
+            )
+        )
+
+
+class InitializeLambdaExpressionException(SchemaException):
+    def __init__(self, expression):
+        super().__init__(
+            'cannot initialize lambda expression from {expression}'.format(
+                expression=repr(expression)
+            )
+        )
+

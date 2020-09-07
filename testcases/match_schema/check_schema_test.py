@@ -140,3 +140,31 @@ def test_complex_type_mismatch(schema, data, exception):
         check_schema(schema, data)
 
     assert str(execution_information.value) == exception
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: int
+            assertion: "lambda x: x > 0"
+            ''',
+            1
+        ],
+        [
+            '''
+            type: [int, float]
+            assertion: "lambda x: x > 0"
+            ''',
+            2.0
+        ],
+        [
+            '''
+            type: [int, float, None] 
+            assertion: "lambda x: x is None"
+            ''',
+            None
+        ]
+    ]
+)
+def test_assertion(schema, data):
+    check_schema(schema, data)
