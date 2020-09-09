@@ -18,4 +18,4 @@ jobs:
         pip install pylint
     - name: run pylint
       run: |
-        pylint fast_tornado
+        python -c "import subprocess, re; output, _ = subprocess.Popen(['pylint', 'fast_tornado'], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate(); print(re.search('code has been rated at (?P<score>\d+\.\d+)', output.decode('utf8')).groupdict()['score'])"
