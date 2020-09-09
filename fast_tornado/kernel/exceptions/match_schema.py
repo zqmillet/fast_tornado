@@ -23,6 +23,9 @@ class TypeMismatchException(SchemaException):
         )
 
 class AssertionException(SchemaException):
+    """
+    description: if the data cannot pass the assertion, raise this exception.
+    """
     def __init__(self, data, assertion, name):
         super().__init__(
             '{name} = {data}, cannot pass the assertion {assertion}'.format(
@@ -34,10 +37,14 @@ class AssertionException(SchemaException):
 
 
 class InitializeLambdaExpressionException(SchemaException):
+    """
+    description: |
+        if there are something wrong while initializing the lambda expression,
+        raise this exception.
+    """
     def __init__(self, expression):
         super().__init__(
             'cannot initialize lambda expression from {expression}'.format(
                 expression=repr(expression)
             )
         )
-

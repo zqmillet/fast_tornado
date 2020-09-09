@@ -58,7 +58,7 @@ def __initialize_assertion(schema):
 
 def __get_lambda_expression(expression):
     try:
-        lambda_expression = eval(expression)
+        lambda_expression = eval(expression) # pylint: disable = eval-used
     except Exception:
         raise InitializeLambdaExpressionException(expression) from None
     else:
@@ -91,6 +91,7 @@ def check_schema(schema, data, name='data'):
             type: any
             description: the data.
     """
+
     schema = yaml.safe_load(schema)
 
     __initialize_types(schema)
