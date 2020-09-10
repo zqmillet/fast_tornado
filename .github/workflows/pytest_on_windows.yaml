@@ -19,7 +19,8 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        set PYTHONPATH="c:\" && python -c "import sys; print(sys.path)"
+        python -c "import site, os; file = open(os.path.join(site.getsitepackages()[0], 'path.pth'), 'w'); file.write('import sys; sys.path.append(\'.\')'); file.close()"
+        python -c "import sys; print(sys.path)"
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
