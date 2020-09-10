@@ -19,7 +19,7 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        set PYTHONPATH=%PYTHONPATH%;.
+        set PYTHONPATH=%PYTHONPATH%;"."
         pytest testcases --cov fast_tornado --cov-report xml
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
