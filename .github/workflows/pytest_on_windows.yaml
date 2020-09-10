@@ -20,7 +20,8 @@ jobs:
     - name: Test with pytest
       run: |
         set PYTHONPATH=%PYTHONPATH%;"."
-        pytest testcases --cov fast_tornado --cov-report xml
+        echo %PYTHONPATH%
+        python -c "import sys; print(sys.path)"
     - name: Upload coverage to Codecov  
       uses: codecov/codecov-action@v1
       with:
