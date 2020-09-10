@@ -19,10 +19,9 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        set PYTHONPATH=%PYTHONPATH%;"."
-        echo %PYTHONPATH%
+        set PYTHONPATH="c:\"
         python -c "import sys; print(sys.path)"
-    - name: Upload coverage to Codecov  
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN  }}
