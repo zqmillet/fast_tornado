@@ -20,7 +20,7 @@ jobs:
     - name: Test with pytest
       run: |
         python -c "import site, os; file = open(os.path.join(site.getsitepackages()[0], 'path.pth'), 'w'); file.write('import sys; sys.path.append(\'.\')'); file.close()"
-        python -c "import sys; print(sys.path)"
+        pytest testcases
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
