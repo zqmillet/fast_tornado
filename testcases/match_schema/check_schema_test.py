@@ -8,6 +8,8 @@ import pytest
 from fast_tornado.kernel.match_schema import check_schema
 
 from fast_tornado.kernel.exceptions import TypeMismatchException
+from fast_tornado.kernel.exceptions import AssertionException
+from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -166,5 +168,56 @@ def test_complex_type_mismatch(schema, data, exception):
         ]
     ]
 )
-def test_assertion(schema, data):
+def test_assertion_successfully(schema, data):
     check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: int
+            assertion: "lambda x: x > 0"
+            ''',
+            0,
+            "data = 0, cannot pass the assertion 'lambda x: x > 0'"
+        ],
+        [
+            '''
+            type: [int, float]
+            assertion: "lambda x: x > 0"
+            ''',
+            -0.1,
+            "data = -0.1, cannot pass the assertion 'lambda x: x > 0'"
+
+        ],
+        [
+            '''
+            type: [int, float, None] 
+            assertion: "lambda x: x is None"
+            ''',
+            1,
+            "data = 1, cannot pass the assertion 'lambda x: x is None'"
+        ]
+    ]
+)
+def test_assertion_failed(schema, data, exception_message):
+    with pytest.raises(AssertionException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, exception_message', [
+        [
+            '''
+            type: int
+            assertion: null
+            ''',
+            "cannot initialize lambda expression from None"
+        ]    
+    ]
+)
+def test_initialize_lambda_expression_exception(schema, exception_message):
+    with pytest.raises(InitializeLambdaExpressionException) as execution_information:
+        check_schema(schema, None)
+    assert str(execution_information.value) == exception_message
