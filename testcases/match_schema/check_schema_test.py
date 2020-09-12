@@ -214,10 +214,43 @@ def test_assertion_failed(schema, data, exception_message):
             assertion: null
             ''',
             "cannot initialize lambda expression from None"
-        ]    
+        ],
+        [
+            '''
+            type: int
+            assertion: x > 3
+            ''',
+            "cannot initialize lambda expression from 'x > 3'"
+        ],
+        [
+            '''
+            type: int
+            assertion: x
+            ''',
+            "cannot initialize lambda expression from 'x'"
+        ]
+
     ]
 )
 def test_initialize_lambda_expression_exception(schema, exception_message):
     with pytest.raises(InitializeLambdaExpressionException) as execution_information:
         check_schema(schema, None)
     assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                y:
+                    type: int
+            ''',
+            {'x': 1, 'y': 2}
+        ]
+    ]
+)
+def test_check_properties(schema, data):
+    check_schema(schema, data)

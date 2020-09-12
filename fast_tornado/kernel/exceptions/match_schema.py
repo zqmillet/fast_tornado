@@ -48,3 +48,16 @@ class InitializeLambdaExpressionException(SchemaException):
                 expression=repr(expression)
             )
         )
+
+class CannotFindPropertyException(SchemaException):
+    """
+    description: if there is no specified property, raise this exception.
+    """
+    def __init__(self, data, property_name, name):
+        super().__init__(
+            'cannot find \'{property_name}\' in {name} = {data}'.format(
+                property_name=property_name,
+                name=name,
+                data=repr(data)
+            )
+        )

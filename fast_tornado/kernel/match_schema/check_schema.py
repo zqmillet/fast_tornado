@@ -8,6 +8,7 @@ import yaml
 from fast_tornado.kernel.exceptions import TypeMismatchException
 from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 from fast_tornado.kernel.exceptions import AssertionException
+from fast_tornado.kernel.exceptions import CannotFindPropertyException
 
 TYPES = {
     'int': int,
@@ -78,7 +79,28 @@ def __check_assertion(data, schema, name):
 
     raise AssertionException(data=data, assertion=schema['assertion'], name=name)
 
-def check_schema(schema, data, name='data'):
+def __check_properties(data, schema, name):
+    if 'properties' not in schema:
+        return
+
+    for property_name, property_schema in schema['properties'].items():
+        if property_name not in data:
+            raise CannotFindPropertyException(
+                data=data,
+                property_name=property_name,
+                name=name
+            )
+
+        __check_schema(
+            schema=property_schema,
+            data=data[property_name],
+            name='{name}[{property_name}]'.format(name=name, property_name=property_name)
+        )
+
+def __check_items(data, schema, name):
+    pass
+
+def __check_schema(schema, data, name='data'):
     """
     description: |
         this function is used to check whether does the data match the schema.
@@ -91,11 +113,14 @@ def check_schema(schema, data, name='data'):
             type: any
             description: the data.
     """
-
-    schema = yaml.safe_load(schema)
-
     __initialize_types(schema)
     __initialize_assertion(schema)
 
     __check_type(data, schema, name)
     __check_assertion(data, schema, name)
+    __check_properties(data, schema, name)
+    __check_items(data, schema, name)
+
+def check_schema(schema, data, name='data'):
+    schema = yaml.safe_load(schema)
+    __check_schema(schema, data, name)
