@@ -94,7 +94,7 @@ def __check_properties(data, schema, name):
         __check_schema(
             schema=property_schema,
             data=data[property_name],
-            name='{name}[{property_name}]'.format(name=name, property_name=property_name)
+            name='{name}[{property_name}]'.format(name=name, property_name=repr(property_name))
         )
 
 def __check_items(data, schema, name):

@@ -10,6 +10,7 @@ from fast_tornado.kernel.match_schema import check_schema
 from fast_tornado.kernel.exceptions import TypeMismatchException
 from fast_tornado.kernel.exceptions import AssertionException
 from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
+from fast_tornado.kernel.exceptions import CannotFindPropertyException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -219,6 +220,7 @@ def test_assertion_failed(schema, data, exception_message):
             '''
             type: int
             assertion: x > 3
+
             ''',
             "cannot initialize lambda expression from 'x > 3'"
         ],
@@ -249,8 +251,82 @@ def test_initialize_lambda_expression_exception(schema, exception_message):
                     type: int
             ''',
             {'x': 1, 'y': 2}
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                y:
+                    type: int
+            ''',
+            {'x': 1, 'y': 2, 'z': 3}
         ]
     ]
 )
 def test_check_properties(schema, data):
     check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                y:
+                    type: int
+            ''',
+            {'x': 1},
+            "cannot find 'y' in data = {'x': 1}"
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                y:
+                    type: int
+            ''',
+            {'y': 2, 'z': 3},
+            "cannot find 'x' in data = {'y': 2, 'z': 3}"
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: dict
+                    properties:
+                        y:
+                            type: int
+            ''',
+            {'x': {}},
+            "cannot find 'y' in data['x'] = {}"
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: dict
+                    properties:
+                        y:
+                            type: dict
+                            properties:
+                                z:
+                                    type: dict
+            ''',
+            {'x': {'y': {}}},
+            "cannot find 'z' in data['x']['y'] = {}"
+        ]
+    ]
+)
+def test_check_missing_property(schema, data, exception_message):
+    with pytest.raises(CannotFindPropertyException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
