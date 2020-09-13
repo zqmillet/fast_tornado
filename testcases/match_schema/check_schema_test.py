@@ -330,3 +330,129 @@ def test_check_missing_property(schema, data, exception_message):
         check_schema(schema, data)
 
     assert str(execution_information.value) == exception_message
+
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: list
+            items:
+                type: int
+            ''',
+            [1, 2, 3.0],
+            'data[2] = 3.0, but its type should be int'
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: dict
+            ''',
+            [{'x': 1}, []],
+            'data[1] = [], but its type should be dict'
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: dict
+                properties:
+                    x:
+                        type: int
+            ''',
+            [{'x': 1}, {'x': '1'}],
+            "data[1]['x'] = '1', but its type should be int"
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: list
+                    items:
+                        type: int
+            ''',
+            {'x': [1, 2, 3.0]},
+            "data['x'][2] = 3.0, but its type should be int"
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: list
+                items:
+                    type: list
+                    items:
+                        type: int
+            ''',
+            [[], [[]], [[1, 2, 3.0]], []],
+            'data[2][0][2] = 3.0, but its type should be int'
+        ]
+    ]
+)
+def test_check_items_with_exception(schema, data, exception_message):
+    with pytest.raises(TypeMismatchException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: list
+            items:
+                type: int
+            ''',
+            [1, 2, 3]
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: int
+            ''',
+            []
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: [int, float]
+            ''',
+            [1, 2, 3.0, 4.4]
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: list
+            ''',
+            [[], [1], [1, 2, 3]]
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: list
+                items:
+                    type: int
+            ''',
+            [[], [1], [1, 2, 3]]
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: list
+                items:
+                    type: [int, str, float]
+            ''',
+            [[], [1], [1, 2, 3, '4', 5.1]]
+        ]
+
+    ]
+)
+def test_check_items_without_exception(schema, data):
+    check_schema(schema, data)

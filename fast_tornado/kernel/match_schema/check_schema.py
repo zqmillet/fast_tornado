@@ -98,7 +98,15 @@ def __check_properties(data, schema, name):
         )
 
 def __check_items(data, schema, name):
-    pass
+    if 'items' not in schema:
+        return
+
+    for index, item in enumerate(data):
+        __check_schema(
+            data=item,
+            schema=schema['items'],
+            name='{name}[{index}]'.format(name=name, index=repr(index))
+        )
 
 def __check_schema(schema, data, name='data'):
     """
