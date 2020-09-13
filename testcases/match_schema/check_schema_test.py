@@ -291,8 +291,8 @@ def test_check_properties(schema, data):
                 y:
                     type: int
             ''',
-            {'y': 2, 'z': 3},
-            "cannot find 'x' in data = {'y': 2, 'z': 3}"
+            {'y': 2},
+            "cannot find 'x' in data = {'y': 2}"
         ],
         [
             '''
