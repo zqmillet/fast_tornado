@@ -74,4 +74,3 @@ class EnumerationException(SchemaException):
                 enumeration=repr(enumeration)
             )
         )
-

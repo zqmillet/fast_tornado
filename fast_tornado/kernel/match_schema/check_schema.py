@@ -123,6 +123,16 @@ def __check_enumeration(data, schema, name):
     )
 
 def __check_schema(schema, data, name='data'):
+    __initialize_types(schema)
+    __initialize_assertion(schema)
+
+    __check_type(data, schema, name)
+    __check_assertion(data, schema, name)
+    __check_properties(data, schema, name)
+    __check_items(data, schema, name)
+    __check_enumeration(data, schema, name)
+
+def check_schema(schema, data, name='data'):
     """
     description: |
         this function is used to check whether does the data match the schema.
@@ -135,15 +145,5 @@ def __check_schema(schema, data, name='data'):
             type: any
             description: the data.
     """
-    __initialize_types(schema)
-    __initialize_assertion(schema)
-
-    __check_type(data, schema, name)
-    __check_assertion(data, schema, name)
-    __check_properties(data, schema, name)
-    __check_items(data, schema, name)
-    __check_enumeration(data, schema, name)
-
-def check_schema(schema, data, name='data'):
     schema = yaml.safe_load(schema)
     __check_schema(schema, data, name)
