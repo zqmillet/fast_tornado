@@ -61,3 +61,17 @@ class CannotFindPropertyException(SchemaException):
                 data=repr(data)
             )
         )
+
+class EnumerationException(SchemaException):
+    """
+    description: if the data not in the enumeration, raise this exception.
+    """
+    def __init__(self, data, enumeration, name):
+        super().__init__(
+            '{name} = {data}, does not in enumeration {enumeration}'.format(
+                name=name,
+                data=repr(data),
+                enumeration=repr(enumeration)
+            )
+        )
+

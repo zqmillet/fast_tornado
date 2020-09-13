@@ -11,6 +11,7 @@ from fast_tornado.kernel.exceptions import TypeMismatchException
 from fast_tornado.kernel.exceptions import AssertionException
 from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 from fast_tornado.kernel.exceptions import CannotFindPropertyException
+from fast_tornado.kernel.exceptions import EnumerationException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -455,4 +456,85 @@ def test_check_items_with_exception(schema, data, exception_message):
     ]
 )
 def test_check_items_without_exception(schema, data):
+    check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: int
+            enumeration: [1, 2, 3]
+            ''',
+            4,
+            'data = 4, does not in enumeration [1, 2, 3]'
+        ],
+        [
+            '''
+            type: str
+            enumeration: [x, y, z]
+            ''',
+            'w',
+            "data = 'w', does not in enumeration ['x', 'y', 'z']"
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: int
+                enumeration: [1, 2, 3]
+            ''',
+            [1, 2, 3, 4, 5],
+            'data[3] = 4, does not in enumeration [1, 2, 3]'
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: dict
+                properties:
+                    x:
+                        type: str
+                        enumeration: [x, y, z]
+            ''',
+            [{'x': 'x'}, {'x': 'w'}, {'x': 'y'}],
+            "data[1]['x'] = 'w', does not in enumeration ['x', 'y', 'z']"
+        ]
+    ]
+)
+def test_enumeration_with_exception(schema, data, exception_message):
+    with pytest.raises(EnumerationException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: int
+            enumeration: [1, 2, 3]
+            ''',
+            1
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: [int, str]
+                enumeration: [1, 2, 3, x, y, z]
+            ''',
+            [1, 1, 'x', 'y']
+        ],
+        [
+             '''
+            type: list
+            items:
+                type: [int, str, None]
+                enumeration: [1, 2, 3, x, y, z, null]
+            ''',
+            [1, 1, 'x', None]
+        ]
+    ]
+)
+def test_enumeration_without_exception(schema, data):
     check_schema(schema, data)

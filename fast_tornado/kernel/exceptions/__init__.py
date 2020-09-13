@@ -9,3 +9,4 @@ from .match_schema import TypeMismatchException
 from .match_schema import InitializeLambdaExpressionException
 from .match_schema import AssertionException
 from .match_schema import CannotFindPropertyException
+from .match_schema import EnumerationException

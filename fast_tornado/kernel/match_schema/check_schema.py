@@ -9,6 +9,7 @@ from fast_tornado.kernel.exceptions import TypeMismatchException
 from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 from fast_tornado.kernel.exceptions import AssertionException
 from fast_tornado.kernel.exceptions import CannotFindPropertyException
+from fast_tornado.kernel.exceptions import EnumerationException
 
 TYPES = {
     'int': int,
@@ -108,6 +109,19 @@ def __check_items(data, schema, name):
             name='{name}[{index}]'.format(name=name, index=repr(index))
         )
 
+def __check_enumeration(data, schema, name):
+    if 'enumeration' not in schema:
+        return
+
+    if data in schema['enumeration']:
+        return
+
+    raise EnumerationException(
+        data=data,
+        enumeration=schema['enumeration'],
+        name=name
+    )
+
 def __check_schema(schema, data, name='data'):
     """
     description: |
@@ -128,6 +142,7 @@ def __check_schema(schema, data, name='data'):
     __check_assertion(data, schema, name)
     __check_properties(data, schema, name)
     __check_items(data, schema, name)
+    __check_enumeration(data, schema, name)
 
 def check_schema(schema, data, name='data'):
     schema = yaml.safe_load(schema)
