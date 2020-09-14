@@ -11,3 +11,4 @@ from .match_schema import AssertionException
 from .match_schema import CannotFindPropertyException
 from .match_schema import EnumerationException
 from .match_schema import InvalidPropertyException
+from .match_schema import DependenciesException

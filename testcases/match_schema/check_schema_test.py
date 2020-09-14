@@ -13,6 +13,7 @@ from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 from fast_tornado.kernel.exceptions import CannotFindPropertyException
 from fast_tornado.kernel.exceptions import EnumerationException
 from fast_tornado.kernel.exceptions import InvalidPropertyException
+from fast_tornado.kernel.exceptions import DependenciesException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -652,3 +653,90 @@ def test_additional_properties_with_exception(schema, data, exception_message):
         check_schema(schema, data)
 
     assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                    dependencies: [y]
+                    required: false
+                y:
+                    type: int
+                    dependencies: [x]
+                    required: false
+            ''',
+            {'x': 1},
+            "property 'x' depends on 'y', but 'y' does not in data = {'x': 1}"
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                    dependencies: [y]
+                    required: false
+                y:
+                    type: int
+                    dependencies: [x]
+                    required: false
+            ''',
+            {'y': 1},
+            "property 'y' depends on 'x', but 'x' does not in data = {'y': 1}"
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                    required: false
+                y:
+                    type: int
+                    required: false
+                z:
+                    type: int
+                    dependencies: [x, y]
+            ''',
+            {'z': 1},
+            "property 'z' depends on 'x', 'y', but 'x', 'y' does not in data = {'z': 1}"
+        ],
+
+    ]
+)
+def test_dependencies_with_exception(schema, data, exception_message):
+    with pytest.raises(DependenciesException) as execution_information:
+        check_schema(schema, data) 
+
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema', [
+        '''
+        type: dict
+        properties:
+            x:
+                type: int
+                dependencies: [y]
+                required: false
+            y:
+                type: int
+                dependencies: [x]
+                required: false
+        '''
+    ]
+)
+@pytest.mark.parametrize(
+    'data', [
+        {'x': 1, 'y': 2},
+        {},
+        {'z': 3},
+        {'x': 1, 'y': 2, 'z': 3},
+    ]
+)
+def test_dependencies_without_exception(schema, data):
+    check_schema(schema, data) 

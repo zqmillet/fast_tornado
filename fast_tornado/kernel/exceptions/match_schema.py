@@ -89,3 +89,19 @@ class InvalidPropertyException(SchemaException):
                 data=repr(data)
             )
         )
+
+class DependenciesException(SchemaException):
+    """
+    description: |
+        if dependencies of a property do not exist, raise this exception.
+    """
+    def __init__(self, data, property_name, name, nonexistent_dependencies):
+        super().__init__(
+            'property \'{property_name}\' depends on {nonexistent_dependencies}, ' \
+            'but {nonexistent_dependencies} does not in {name} = {data}'.format(
+                property_name=property_name,
+                name=name,
+                data=repr(data),
+                nonexistent_dependencies=', '.join(repr(item) for item in nonexistent_dependencies)
+            )
+        )

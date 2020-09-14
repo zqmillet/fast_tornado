@@ -11,6 +11,7 @@ from fast_tornado.kernel.exceptions import AssertionException
 from fast_tornado.kernel.exceptions import CannotFindPropertyException
 from fast_tornado.kernel.exceptions import EnumerationException
 from fast_tornado.kernel.exceptions import InvalidPropertyException
+from fast_tornado.kernel.exceptions import DependenciesException
 
 TYPES = {
     'int': int,
@@ -95,12 +96,26 @@ def __check_properties(data, schema, name):
                 name=name
             )
 
-        if property_name in data: 
-            __check_schema(
-                schema=property_schema,
-                data=data[property_name],
-                name='{name}[{property_name}]'.format(name=name, property_name=repr(property_name))
+        if property_name not in data: 
+            continue
+
+        dependencies = property_schema.get('dependencies', list())
+        for dependency in dependencies:
+            if dependency in data:
+                continue
+
+            raise DependenciesException(
+                data=data,
+                name=name,
+                property_name=property_name,
+                nonexistent_dependencies=sorted(set(dependencies) - data.keys())
             )
+
+        __check_schema(
+            schema=property_schema,
+            data=data[property_name],
+            name='{name}[{property_name}]'.format(name=name, property_name=repr(property_name))
+        )
 
     additional_properities = sorted(set(data) - schema['properties'].keys())
     if not schema.get('additional_properities', True) and additional_properities:
