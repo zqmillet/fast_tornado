@@ -85,18 +85,21 @@ def __check_properties(data, schema, name):
         return
 
     for property_name, property_schema in schema['properties'].items():
-        if property_name not in data:
+        required = property_schema.get('required', True)
+
+        if property_name not in data and required:
             raise CannotFindPropertyException(
                 data=data,
                 property_name=property_name,
                 name=name
             )
 
-        __check_schema(
-            schema=property_schema,
-            data=data[property_name],
-            name='{name}[{property_name}]'.format(name=name, property_name=repr(property_name))
-        )
+        if property_name in data: 
+            __check_schema(
+                schema=property_schema,
+                data=data[property_name],
+                name='{name}[{property_name}]'.format(name=name, property_name=repr(property_name))
+            )
 
 def __check_items(data, schema, name):
     if 'items' not in schema:

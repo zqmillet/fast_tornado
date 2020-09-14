@@ -538,3 +538,76 @@ def test_enumeration_with_exception(schema, data, exception_message):
 )
 def test_enumeration_without_exception(schema, data):
     check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                    required: false
+                y:
+                    type: int
+            ''',
+            {'y': 1}
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: dict
+                properties:
+                    x:
+                        type: int
+                        required: false
+                    y:
+                        type: int
+            ''',
+            [{'y': 1}, {'x': 1, 'y': 2}, {'y': 3, 'z': 3}]
+        ]
+    ]
+)
+def test_required_field_in_properties_without_exception(schema, data):
+    check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                    required: false
+                y:
+                    type: int
+                    required: true
+            ''',
+            {},
+            "cannot find 'y' in data = {}"
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: dict
+                properties:
+                    x:
+                        type: int
+                        required: false
+                    y:
+                        type: int
+                        required: true
+            ''',
+            [{'z': 1}, {'x': 1, 'y': 2}, {'y': 3, 'z': 3}],
+            "cannot find 'y' in data[0] = {'z': 1}"
+        ]
+    ]
+)
+def test_required_field_in_properties_with_exception(schema, data, exception_message):
+    with pytest.raises(CannotFindPropertyException) as execution_information:
+        check_schema(schema, data)
+
+    print(execution_information.value)
