@@ -10,6 +10,7 @@ from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 from fast_tornado.kernel.exceptions import AssertionException
 from fast_tornado.kernel.exceptions import CannotFindPropertyException
 from fast_tornado.kernel.exceptions import EnumerationException
+from fast_tornado.kernel.exceptions import InvalidPropertyException
 
 TYPES = {
     'int': int,
@@ -100,6 +101,14 @@ def __check_properties(data, schema, name):
                 data=data[property_name],
                 name='{name}[{property_name}]'.format(name=name, property_name=repr(property_name))
             )
+
+    additional_properities = sorted(set(data) - schema['properties'].keys())
+    if not schema.get('additional_properities', True) and additional_properities:
+        raise InvalidPropertyException(
+            data=data,
+            property_names=additional_properities,
+            name=name
+        )
 
 def __check_items(data, schema, name):
     if 'items' not in schema:

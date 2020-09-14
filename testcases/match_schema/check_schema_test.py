@@ -12,6 +12,7 @@ from fast_tornado.kernel.exceptions import AssertionException
 from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
 from fast_tornado.kernel.exceptions import CannotFindPropertyException
 from fast_tornado.kernel.exceptions import EnumerationException
+from fast_tornado.kernel.exceptions import InvalidPropertyException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -610,4 +611,44 @@ def test_required_field_in_properties_with_exception(schema, data, exception_mes
     with pytest.raises(CannotFindPropertyException) as execution_information:
         check_schema(schema, data)
 
-    print(execution_information.value)
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: int
+                y:
+                    type: int
+            additional_properities: false
+            ''',
+            {'x': 1, 'y': 2, 'z': 3},
+            "property 'z' in data = {'x': 1, 'y': 2, 'z': 3} is not allowed"
+        ],
+        [
+            '''
+            type: list
+            items:
+                type: dict
+                properties:
+                    x:
+                        type: int
+                        required: false
+                    y:
+                        type: int
+                        required: false
+                additional_properities: false
+            ''',
+            [{}, {'x': 1}, {'z': 3}],
+            "property 'z' in data[2] = {'z': 3} is not allowed"
+        ]
+    ]
+)
+def test_additional_properties_with_exception(schema, data, exception_message):
+    with pytest.raises(InvalidPropertyException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message

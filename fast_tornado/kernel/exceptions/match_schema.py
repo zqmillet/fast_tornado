@@ -74,3 +74,18 @@ class EnumerationException(SchemaException):
                 enumeration=repr(enumeration)
             )
         )
+
+class InvalidPropertyException(SchemaException):
+    """
+    description: |
+        if there is a property in data, and this property is not defined in schema,
+        and the additional_properities is False, raise this exception.
+    """
+    def __init__(self, data, property_names, name):
+        super().__init__(
+            'property \'{property_names}\' in {name} = {data} is not allowed'.format(
+                property_names=', '.join(property_names),
+                name=name,
+                data=repr(data)
+            )
+        )
