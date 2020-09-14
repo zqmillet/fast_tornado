@@ -627,7 +627,9 @@ def test_required_field_in_properties_with_exception(schema, data, exception_mes
             additional_properities: false
             ''',
             {'x': 1, 'y': 2, 'z': 3},
-            "property 'z' in data = {'x': 1, 'y': 2, 'z': 3} is not allowed"
+            "property 'z' in data = {data} is not allowed".format(
+                data=repr({'x': 1, 'y': 2, 'z': 3})
+            )
         ],
         [
             '''

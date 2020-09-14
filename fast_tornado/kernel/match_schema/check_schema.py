@@ -96,7 +96,7 @@ def __check_properties(data, schema, name):
                 name=name
             )
 
-        if property_name not in data: 
+        if property_name not in data:
             continue
 
         dependencies = property_schema.get('dependencies', list())
