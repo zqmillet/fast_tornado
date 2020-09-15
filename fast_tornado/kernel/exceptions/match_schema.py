@@ -105,3 +105,28 @@ class DependenciesException(SchemaException):
                 nonexistent_dependencies=', '.join(repr(item) for item in nonexistent_dependencies)
             )
         )
+
+class RegexPatternException(SchemaException):
+    """
+    description: if the string does not match the pattern, raise this exception.
+    """
+    def __init__(self, data, pattern, name):
+        super().__init__(
+            '{name} = {data}, does not match the regex \'{pattern}\''.format(
+                name=name,
+                data=repr(data),
+                pattern=pattern
+            )
+        )
+
+class NonstringTypeHasPatternException(SchemaException):
+    """
+    description: |
+        if the schema type does not contain str, but it has pattern field, raise this exception.
+    """
+    def __init__(self, schema):
+        super().__init__(
+            'non-string schema {schema} should not have pattern field'.format(
+                schema=schema
+            )
+        )

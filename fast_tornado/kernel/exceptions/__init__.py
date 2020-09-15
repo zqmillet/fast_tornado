@@ -12,3 +12,5 @@ from .match_schema import CannotFindPropertyException
 from .match_schema import EnumerationException
 from .match_schema import InvalidPropertyException
 from .match_schema import DependenciesException
+from .match_schema import RegexPatternException
+from .match_schema import NonstringTypeHasPatternException

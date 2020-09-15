@@ -14,6 +14,8 @@ from fast_tornado.kernel.exceptions import CannotFindPropertyException
 from fast_tornado.kernel.exceptions import EnumerationException
 from fast_tornado.kernel.exceptions import InvalidPropertyException
 from fast_tornado.kernel.exceptions import DependenciesException
+from fast_tornado.kernel.exceptions import RegexPatternException
+from fast_tornado.kernel.exceptions import NonstringTypeHasPatternException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -742,3 +744,92 @@ def test_dependencies_with_exception(schema, data, exception_message):
 )
 def test_dependencies_without_exception(schema, data):
     check_schema(schema, data) 
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: str
+            pattern: \\d+
+            ''',
+            'abc',
+            "data = 'abc', does not match the regex '\\d+'"
+        ],
+        [
+            '''
+            type: str
+            pattern: "[a-zA-Z]+"
+            ''',
+            '123',
+            "data = '123', does not match the regex '[a-zA-Z]+'"
+        ],
+        [
+            '''
+            type: str
+            pattern: "[a-zA-Z]{2,3}"
+            ''',
+            'a',
+            "data = 'a', does not match the regex '[a-zA-Z]{2,3}'"
+        ]
+    ]
+)
+def test_pattern_with_exception(data, schema, exception_message):
+    with pytest.raises(RegexPatternException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: str
+            pattern: \\d+
+            ''',
+            '1234567'
+        ],
+        [
+            '''
+            type: str
+            pattern: "[a-zA-Z]+"
+            ''',
+            'abcdefg'
+        ],
+        [
+            '''
+            type: str
+            pattern: "[a-zA-Z]{2,3}"
+            ''',
+            'ab'
+        ]
+    ]
+)
+def test_pattern_without_exception(data, schema):
+    check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema', [
+        '''
+        type: int
+        pattern: \\d+
+        ''',
+        '''
+        type: dict
+        pattern: \\d+
+        ''',
+        '''
+        type: [dict]
+        pattern: \\d+
+        ''',
+        '''
+        type: [dict, float]
+        pattern: \\d+
+        '''
+    ]    
+)
+def test_non_string_type_with_pattern(schema):
+    with pytest.raises(NonstringTypeHasPatternException) as execution_information:
+        check_schema(schema, None)
+
+    assert 'non-string schema' in str(execution_information.value)
+    assert 'should not have pattern field' in str(execution_information.value)

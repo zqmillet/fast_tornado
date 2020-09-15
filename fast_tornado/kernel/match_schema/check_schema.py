@@ -2,6 +2,7 @@
 description: this module provides the function check_schema.
 """
 
+import re
 import importlib
 import yaml
 
@@ -12,6 +13,8 @@ from fast_tornado.kernel.exceptions import CannotFindPropertyException
 from fast_tornado.kernel.exceptions import EnumerationException
 from fast_tornado.kernel.exceptions import InvalidPropertyException
 from fast_tornado.kernel.exceptions import DependenciesException
+from fast_tornado.kernel.exceptions import RegexPatternException
+from fast_tornado.kernel.exceptions import NonstringTypeHasPatternException
 
 TYPES = {
     'int': int,
@@ -149,15 +152,35 @@ def __check_enumeration(data, schema, name):
         name=name
     )
 
+def __check_pattern(data, schema, name):
+    if 'pattern' not in schema:
+        return
+
+    if re.match(pattern=schema['pattern'], string=data) :
+        return
+
+    raise RegexPatternException(
+        name=name,
+        data=data,
+        pattern=schema['pattern']
+    )
+
+def __check_validation(schema):
+    if str not in schema['type'] and 'pattern' in schema:
+        raise NonstringTypeHasPatternException(schema=schema)
+
+
 def __check_schema(schema, data, name='data'):
     __initialize_types(schema)
     __initialize_assertion(schema)
+    __check_validation(schema)
 
     __check_type(data, schema, name)
     __check_assertion(data, schema, name)
     __check_properties(data, schema, name)
     __check_items(data, schema, name)
     __check_enumeration(data, schema, name)
+    __check_pattern(data, schema, name)
 
 def check_schema(schema, data, name='data'):
     """
