@@ -24,7 +24,8 @@ TYPES = {
     'set': set,
     'list': list,
     'any': object,
-    'None': type(None)
+    'None': type(None),
+    None: type(None),
 }
 
 
@@ -51,7 +52,8 @@ def __initialize_types(schema):
         types = tuple([__load_type(item) for item in types])
     elif isinstance(types, str):
         types = (__load_type(types),)
-
+    elif types is None:
+        types = (type(None),)
     schema['type'] = types
 
 def __initialize_assertion(schema):

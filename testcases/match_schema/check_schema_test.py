@@ -63,6 +63,8 @@ def test_type_mismatch(schema, data, exception):
 
 @pytest.mark.parametrize(
     'schema, data', [
+        ['type: null', None],
+        ['type: [null]', None],
         ['type: int', 1],
         ['type: [int, float]', 1],
         ['type: [int, float]', 1.2],
@@ -81,6 +83,8 @@ def test_type_mismatch(schema, data, exception):
         ['type: [dict, list]', [1, 2, 3]],
         ['type: [dict, list]', list()],
         ['type: [dict, list]', {'x': 3, 'y': 1}],
+        ['type: None', None],
+        ['type: [None]', None],
     ]
 )
 def test_type_match(schema, data):
