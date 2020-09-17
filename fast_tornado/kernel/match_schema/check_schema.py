@@ -25,11 +25,11 @@ TYPES = {
     'list': list,
     'any': object,
     'None': type(None),
-    None: type(None),
 }
 
 
 def __load_type(type_string):
+    type_string = str(type_string)
     if type_string in TYPES:
         return TYPES[type_string]
 
