@@ -41,8 +41,10 @@ def test_logger_properties(name, file_path, title_format, level):
 
 @pytest.mark.parametrize('name', ['logger', 'fast_tornado'])
 def test_stream_handler(name, capsys):
-    logger = Logger(name)
-    logger.info('1234')
+    logger = Logger(name, indent=2)
+    logger.info('1234\n12343')
+    logger.warning('1234')
+    logger.critical('1234')
     output, error = capsys.readouterr()
     assert error == ''
-    print(logger.format)
+    print(output)
