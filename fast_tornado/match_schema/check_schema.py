@@ -6,15 +6,15 @@ import re
 import importlib
 import yaml
 
-from fast_tornado.kernel.exceptions import TypeMismatchException
-from fast_tornado.kernel.exceptions import InitializeLambdaExpressionException
-from fast_tornado.kernel.exceptions import AssertionException
-from fast_tornado.kernel.exceptions import CannotFindPropertyException
-from fast_tornado.kernel.exceptions import EnumerationException
-from fast_tornado.kernel.exceptions import InvalidPropertyException
-from fast_tornado.kernel.exceptions import DependenciesException
-from fast_tornado.kernel.exceptions import RegexPatternException
-from fast_tornado.kernel.exceptions import NonstringTypeHasPatternException
+from fast_tornado.exceptions import TypeMismatchException
+from fast_tornado.exceptions import InitializeLambdaExpressionException
+from fast_tornado.exceptions import AssertionException
+from fast_tornado.exceptions import CannotFindPropertyException
+from fast_tornado.exceptions import EnumerationException
+from fast_tornado.exceptions import InvalidPropertyException
+from fast_tornado.exceptions import DependenciesException
+from fast_tornado.exceptions import RegexPatternException
+from fast_tornado.exceptions import NonstringTypeHasPatternException
 
 TYPES = {
     'int': int,
