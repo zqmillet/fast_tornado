@@ -11,6 +11,8 @@ ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
 TITLE_FORMAT = '[%(asctime)s][%(name)s][%(levelname)-8s][%(filename)s:%(lineno)d]'
+MESSAGE_FORMAT = '%(message)s'
+SEPARATOR = '\n'
 NAME = 'fast_tornado'
 FILE_PATH = None
 LEVEL = DEBUG

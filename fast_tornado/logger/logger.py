@@ -20,9 +20,10 @@ class Logger(logging.Logger):
 
         self.__file_path = kwargs.get('file_path', LOGGER.FILE_PATH)
         self.__title_format = kwargs.get('title_format', LOGGER.TITLE_FORMAT)
-        self.__separator = kwargs.get('separator', '\n')
+        self.__separator = kwargs.get('separator', LOGGER.SEPARATOR)
         self.__indent = kwargs.get('indent', LOGGER.INDENT)
-        self.__format = self.__title_format + self.__separator + '%(message)s'
+        self.__message_format = kwargs.get('message_format', LOGGER.MESSAGE_FORMAT)
+        self.__format = self.__title_format + self.__separator + self.__message_format
 
         self.__initialize_stream_handler()
 
