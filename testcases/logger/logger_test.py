@@ -1,3 +1,4 @@
+import re
 import pytest
 import logging
 
@@ -39,12 +40,44 @@ def test_logger_properties(name, file_path, title_format, level):
     assert logger.title_format == LOGGER.TITLE_FORMAT
     assert logger.level == LOGGER.DEBUG
 
-@pytest.mark.parametrize('name', ['logger', 'fast_tornado'])
-def test_stream_handler(name, capsys):
-    logger = Logger(name, indent=2)
-    logger.info('1234\n12343')
-    logger.warning('1234')
-    logger.critical('1234')
+@pytest.mark.parametrize(
+    'name', ['logger', 'fast_tornado']
+)
+@pytest.mark.parametrize(
+    'level', [LOGGER.DEBUG, LOGGER.INFO, LOGGER.WARNING, LOGGER.ERROR, LOGGER.CRITICAL]
+)
+@pytest.mark.parametrize(
+    'message', [pytest.text_generator.paragraph() for _ in range(3)]
+)
+@pytest.mark.parametrize(
+    'indent', [0, 1, 2, 4]
+)
+def test_stream_handler(name, level, message, indent, capsys, terminal_width):
+    logger = Logger(name, indent=indent, level=level)
+    logger.debug(message)
+    logger.info(message)
+    logger.warning(message)
+    logger.error(message)
+    logger.critical(message)
     output, error = capsys.readouterr()
-    assert error == ''
-    print(output)
+
+    assert not error
+
+    title_pattern = r'\[(?P<time>.+)\]\[(?P<name>.+)\]\[(?P<level>.+)\]\[(?P<file_name>.+):(?P<line_number>.+)\]'
+    time_pattern = r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}'
+
+    for line in output.splitlines():
+        result = re.match(pattern=title_pattern, string=line)
+        if result:
+            group_dictionary = result.groupdict()
+            assert re.match(time_pattern, group_dictionary['time'])
+            assert group_dictionary['name'] == name
+            assert group_dictionary['file_name'] == __file__
+            assert logging.getLevelName(group_dictionary['level'].strip()) >= level 
+            assert group_dictionary['line_number'].isdigit()
+        else:
+            prefix = line[:indent]
+            message = line[indent:]
+            assert prefix == ' ' * indent
+            assert not message.startswith(' ')
+            assert len(line) <= terminal_width

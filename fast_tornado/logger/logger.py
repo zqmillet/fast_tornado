@@ -3,10 +3,10 @@ description: this module provides the class ``Logger``.
 """
 
 import sys
-import textwrap
 import logging
 
 from fast_tornado.constants import LOGGER
+from fast_tornado.functions import wrap_text
 
 class Logger(logging.Logger):
     """
@@ -22,8 +22,9 @@ class Logger(logging.Logger):
         self.__title_format = kwargs.get('title_format', LOGGER.TITLE_FORMAT)
         self.__separator = kwargs.get('separator', LOGGER.SEPARATOR)
         self.__indent = kwargs.get('indent', LOGGER.INDENT)
-        self.__message_format = kwargs.get('message_format', LOGGER.MESSAGE_FORMAT)
-        self.__format = self.__title_format + self.__separator + self.__message_format
+        self.__format = self.__separator.join(
+            [self.__title_format, kwargs.get('message_format', LOGGER.MESSAGE_FORMAT)]
+        )
 
         self.__initialize_stream_handler()
 
@@ -69,5 +70,5 @@ class StreamHandler(logging.StreamHandler):
         """
         description: override the ``emit`` function to add indent in front of ``record.msg``.
         """
-        record.msg = textwrap.indent(record.msg, self.__indent * ' ')
+        record.msg = wrap_text(record.msg, indent=self.__indent)
         super().emit(record)
