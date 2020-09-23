@@ -15,30 +15,35 @@ def test_logger_properties(name, file_path, title_format, level):
     assert logger.file_path == file_path
     assert logger.title_format == title_format
     assert logger.level == level
+    assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
 
     logger = Logger(name, title_format=title_format, level=level)
     assert logger.name == name
     assert logger.file_path is LOGGER.FILE_PATH
     assert logger.title_format == title_format
     assert logger.level == level
+    assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
 
     logger = Logger(name, level=level)
     assert logger.name == name
     assert logger.file_path is LOGGER.FILE_PATH
     assert logger.title_format == LOGGER.TITLE_FORMAT
     assert logger.level == level
+    assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
 
     logger = Logger(name)
     assert logger.name == name
     assert logger.file_path is LOGGER.FILE_PATH
     assert logger.title_format == LOGGER.TITLE_FORMAT
     assert logger.level == LOGGER.DEBUG
+    assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
 
     logger = Logger()
     assert logger.name == LOGGER.NAME
     assert logger.file_path is LOGGER.FILE_PATH
     assert logger.title_format == LOGGER.TITLE_FORMAT
     assert logger.level == LOGGER.DEBUG
+    assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
 
 @pytest.mark.parametrize(
     'name', ['logger', 'fast_tornado']
