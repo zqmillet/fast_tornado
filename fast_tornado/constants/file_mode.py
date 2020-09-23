@@ -1,0 +1,2 @@
+READ = 'r'
+WRITE = 'w'

@@ -26,6 +26,7 @@ class Logger(logging.Logger):
             [self.__title_format, kwargs.get('message_format', LOGGER.MESSAGE_FORMAT)]
         )
 
+        self.__initialize_file_handler()
         self.__initialize_stream_handler()
 
     @property
@@ -51,6 +52,15 @@ class Logger(logging.Logger):
 
     def __initialize_stream_handler(self):
         handler = StreamHandler(stream=sys.stdout, indent=self.__indent)
+        handler.setLevel(self.level)
+        handler.setFormatter(logging.Formatter(self.__format))
+        self.addHandler(handler)
+
+    def __initialize_file_handler(self):
+        if not self.__file_path:
+            return
+
+        handler = logging.FileHandler(self.__file_path)
         handler.setLevel(self.level)
         handler.setFormatter(logging.Formatter(self.__format))
         self.addHandler(handler)

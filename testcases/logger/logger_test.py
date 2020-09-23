@@ -1,9 +1,12 @@
+import os
 import re
 import pytest
 import logging
 
 from fast_tornado.logger import Logger
 from fast_tornado.constants import LOGGER
+from fast_tornado.constants import FILE_MODE
+from fast_tornado.constants import ENCODE
 
 @pytest.mark.parametrize('name', ['logger', 'fast_tornado'])
 @pytest.mark.parametrize('file_path', [None, './fast_tornado.log'])
@@ -86,3 +89,40 @@ def test_stream_handler(name, level, message, indent, capsys, terminal_width):
             assert prefix == ' ' * indent
             assert not message.startswith(' ')
             assert len(line) <= terminal_width
+
+@pytest.mark.parametrize(
+    'name', ['logger', 'fast_tornado']
+)
+@pytest.mark.parametrize(
+    'level', [LOGGER.DEBUG, LOGGER.INFO, LOGGER.WARNING, LOGGER.ERROR, LOGGER.CRITICAL]
+)
+@pytest.mark.parametrize(
+    'message', [pytest.text_generator.paragraph() for _ in range(3)]
+)
+@pytest.mark.parametrize(
+    'indent', [0, 1, 2, 4]
+)
+@pytest.mark.parametrize(
+    'title_format', ['>>> %(asctime)-15s']
+)
+def test_file_handler(name, level, file_path, message, indent, title_format, capsys):
+    logger = Logger(name, file_path=file_path, title_format=title_format, level=level)
+
+    logger.debug(message)
+    logger.info(message)
+    logger.warning(message)
+    logger.error(message)
+    logger.critical(message)
+
+    output, error = capsys.readouterr()
+    assert not error
+
+    assert os.path.isfile(file_path)
+
+    stream_output = ' '.join(line.strip() for line in output.splitlines() if not line.startswith('>>>'))
+    
+    with open(file_path, FILE_MODE.READ, encoding=ENCODE.UTF8) as file:
+        file_output = ' '.join(line.strip() for line in file.readlines() if not line.startswith('>>>'))
+
+    if not stream_output == file_output:
+        import pdb; pdb.set_trace()
