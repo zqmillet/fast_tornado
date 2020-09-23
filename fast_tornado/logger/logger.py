@@ -26,8 +26,8 @@ class Logger(logging.Logger):
             [self.__title_format, kwargs.get('message_format', LOGGER.MESSAGE_FORMAT)]
         )
 
-        self.__initialize_file_handler()
         self.__initialize_stream_handler()
+        self.__initialize_file_handler()
 
     @property
     def file_path(self):

@@ -119,10 +119,5 @@ def test_file_handler(name, level, file_path, message, indent, title_format, cap
 
     assert os.path.isfile(file_path)
 
-    stream_output = ' '.join(line.strip() for line in output.splitlines() if not line.startswith('>>>'))
-    
     with open(file_path, FILE_MODE.READ, encoding=ENCODE.UTF8) as file:
-        file_output = ' '.join(line.strip() for line in file.readlines() if not line.startswith('>>>'))
-
-    if not stream_output == file_output:
-        import pdb; pdb.set_trace()
+        assert output == file.read()
