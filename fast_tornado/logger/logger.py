@@ -50,6 +50,11 @@ class Logger(logging.Logger):
         """
         return self.__title_format
 
+    def __del__(self):
+        for handler in self.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+
     def __initialize_stream_handler(self):
         handler = StreamHandler(stream=sys.stdout, indent=self.__indent)
         handler.setLevel(self.level)
