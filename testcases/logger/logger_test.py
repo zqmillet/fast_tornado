@@ -48,6 +48,8 @@ def test_logger_properties(name, file_path, title_format, level):
     assert logger.level == LOGGER.DEBUG
     assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
 
+    del logger
+
 @pytest.mark.parametrize(
     'name', ['logger', 'fast_tornado']
 )
@@ -121,3 +123,5 @@ def test_file_handler(name, level, file_path, message, indent, title_format, cap
 
     with open(file_path, FILE_MODE.READ, encoding=ENCODE.UTF8) as file:
         assert output.splitlines() == file.read().splitlines()
+
+    del logger
