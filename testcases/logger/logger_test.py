@@ -120,4 +120,4 @@ def test_file_handler(name, level, file_path, message, indent, title_format, cap
     assert os.path.isfile(file_path)
 
     with open(file_path, FILE_MODE.READ, encoding=ENCODE.UTF8) as file:
-        assert output == file.read()
+        assert output.splitlines() == file.read().splitlines()
