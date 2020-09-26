@@ -4,6 +4,7 @@ description: this module provides the class ``Logger``.
 
 import sys
 import logging
+import logging.handlers
 
 from fast_tornado.constants import LOGGER
 from fast_tornado.functions import wrap_text
@@ -50,11 +51,6 @@ class Logger(logging.Logger):
         """
         return self.__title_format
 
-    def __del__(self):
-        for handler in self.handlers:
-            if isinstance(handler, logging.FileHandler):
-                handler.close()
-
     def __initialize_stream_handler(self):
         handler = StreamHandler(stream=sys.stdout, indent=self.__indent)
         handler.setLevel(self.level)
@@ -65,7 +61,7 @@ class Logger(logging.Logger):
         if not self.__file_path:
             return
 
-        handler = logging.FileHandler(self.__file_path)
+        handler = logging.handlers.RotatingFileHandler(self.__file_path)
         handler.setLevel(self.level)
         handler.setFormatter(logging.Formatter(self.__format))
         self.addHandler(handler)

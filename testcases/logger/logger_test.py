@@ -123,5 +123,3 @@ def test_file_handler(name, level, file_path, message, indent, title_format, cap
 
     with open(file_path, FILE_MODE.READ, encoding=ENCODE.UTF8) as file:
         assert output.splitlines() == file.read().splitlines()
-
-    del logger
