@@ -9,7 +9,6 @@ from fast_tornado.constants import FILE_MODE
 from fast_tornado.constants import ENCODE
 
 @pytest.mark.parametrize('name', ['logger', 'fast_tornado'])
-@pytest.mark.parametrize('file_path', [None, './fast_tornado.log'])
 @pytest.mark.parametrize('title_format', ['%(message)s', '%(asctime)-15s'])
 @pytest.mark.parametrize('level', [logging.DEBUG, logging.CRITICAL])
 def test_logger_properties(name, file_path, title_format, level):
@@ -47,8 +46,6 @@ def test_logger_properties(name, file_path, title_format, level):
     assert logger.title_format == LOGGER.TITLE_FORMAT
     assert logger.level == LOGGER.DEBUG
     assert logger.format == LOGGER.SEPARATOR.join([logger.title_format, LOGGER.MESSAGE_FORMAT])
-
-    del logger
 
 @pytest.mark.parametrize(
     'name', ['logger', 'fast_tornado']
