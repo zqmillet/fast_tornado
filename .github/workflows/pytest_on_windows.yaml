@@ -21,4 +21,4 @@ jobs:
     - name: Test with pytest
       run: |
         python -c "import site, os; file = open(os.path.join(site.getsitepackages()[0], 'path.pth'), 'w'); file.write('import sys; sys.path.append(\'.\')'); file.close()"
-        pytest testcases
+        pytest testcases -vv
