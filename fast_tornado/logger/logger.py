@@ -7,6 +7,7 @@ import logging
 import logging.handlers
 
 from fast_tornado.constants import LOGGER
+from fast_tornado.constants import ENCODE
 from fast_tornado.functions import wrap_text
 
 class Logger(logging.Logger):
@@ -61,7 +62,7 @@ class Logger(logging.Logger):
         if not self.__file_path:
             return
 
-        handler = logging.handlers.RotatingFileHandler(self.__file_path)
+        handler = logging.handlers.RotatingFileHandler(self.__file_path, encoding=ENCODE.UTF8)
         handler.setLevel(self.level)
         handler.setFormatter(logging.Formatter(self.__format))
         self.addHandler(handler)
