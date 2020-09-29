@@ -15,6 +15,22 @@ class Logger(logging.Logger):
     description: this is the logger of fast_tornado.
     """
 
+    __instants = dict()
+
+    def __new__(cls, name=LOGGER.NAME, **kwargs):
+        name = name
+        level = kwargs.get('level', LOGGER.LEVEL)
+        file_path = kwargs.get('file_path', LOGGER.FILE_PATH)
+        title_format = kwargs.get('title_format', LOGGER.TITLE_FORMAT)
+        message_format = kwargs.get('message_format', LOGGER.TITLE_FORMAT)
+        separator = kwargs.get('separator', LOGGER.SEPARATOR)
+        indent = kwargs.get('indent', LOGGER.INDENT)
+
+        key = (name, level, file_path, title_format, separator, message_format, indent)
+        if key not in cls.__instants:
+            cls.__instants[key] = super().__new__(cls)
+        return cls.__instants[key]
+
     def __init__(self, name=LOGGER.NAME, **kwargs):
         super().__init__(name)
         self.name = name
