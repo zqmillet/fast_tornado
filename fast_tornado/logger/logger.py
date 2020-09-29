@@ -18,7 +18,6 @@ class Logger(logging.Logger):
     __instants = dict()
 
     def __new__(cls, name=LOGGER.NAME, **kwargs):
-        name = name
         level = kwargs.get('level', LOGGER.LEVEL)
         file_path = kwargs.get('file_path', LOGGER.FILE_PATH)
         title_format = kwargs.get('title_format', LOGGER.TITLE_FORMAT)

@@ -120,3 +120,21 @@ def test_file_handler(name, level, file_path, message, indent, title_format, cap
 
     with open(file_path, FILE_MODE.READ, encoding=ENCODE.UTF8) as file:
         assert [line.strip() for line in output.splitlines()] == [line.strip() for line in file.read().splitlines()]
+
+@pytest.mark.parametrize(
+    'name', ['logger', 'fast_tornado']
+)
+@pytest.mark.parametrize(
+    'level', [LOGGER.DEBUG, LOGGER.INFO, LOGGER.WARNING, LOGGER.ERROR, LOGGER.CRITICAL]
+)
+@pytest.mark.parametrize(
+    'indent', [0, 1, 2, 4]
+)
+@pytest.mark.parametrize(
+    'title_format', ['>>> %(asctime)-15s']
+)
+def test_singleton(name, level, indent, title_format):
+    assert Logger(name=name, level=level, indent=indent, title_format=title_format) is \
+        Logger(name=name, level=level, indent=indent, title_format=title_format)
+
+    assert Logger(name=name, level=level, indent=indent, title_format=title_format) is not Logger('test')
