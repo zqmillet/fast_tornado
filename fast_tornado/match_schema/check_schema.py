@@ -180,11 +180,11 @@ def __check_maximum(data, schema, name):
     
     exclusive_maximum = schema.get('exclusive_maximum', False)
     if exclusive_maximum:
-        comparison_operation = lambda x, y: x <= y
+        check = lambda x, y: x < y
     else:
-        comparison_operation = lambda x, y: x < y
+        check = lambda x, y: x <= y
 
-    if not comparison_operation(data, maximum):
+    if not check(data, maximum):
         raise ExceedMaximumException(
             name=name,
             exclusive_maximum=exclusive_maximum,

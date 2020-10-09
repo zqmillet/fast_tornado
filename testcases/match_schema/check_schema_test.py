@@ -838,3 +838,84 @@ def test_non_string_type_with_pattern(schema):
 
     assert 'non-string schema' in str(execution_information.value)
     assert 'should not have pattern field' in str(execution_information.value)
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: int
+            maximum: 10
+            ''',
+            0
+        ],
+        [
+            '''
+            type: float
+            maximum: 10
+            ''',
+            10.0
+        ],
+        [
+            '''
+            type: float
+            maximum: 10
+            exclusive_maximum: true
+            ''',
+            9.2
+        ],
+        [
+            '''
+            type: float
+            maximum: 10
+            exclusive_maximum: false
+            ''',
+            10.0
+        ]
+    ]
+)
+def test_maximum_without_exception(data, schema):
+    check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: int
+            maximum: 10
+            ''',
+            11,
+            'data = 11, which should <= 10'
+        ],
+        [
+            '''
+            type: float
+            maximum: 0
+            ''',
+            1.2,
+            'data = 1.2, which should <= 0'
+        ],
+        [
+            '''
+            type: int
+            maximum: 10
+            exclusive_maximum: true
+            ''',
+            10,
+            'data = 10, which should < 10'
+        ],
+        [
+            '''
+            type: [int, float]
+            maximum: 9
+            exclusive_maximum: false
+            ''',
+            10,
+            'data = 10, which should <= 9'
+        ]
+    ]
+)
+def test_maximum_with_exception(data, schema, exception_message):
+    with pytest.raises(ExceedMaximumException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
