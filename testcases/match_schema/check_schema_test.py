@@ -16,6 +16,7 @@ from fast_tornado.exceptions import InvalidPropertyException
 from fast_tornado.exceptions import DependenciesException
 from fast_tornado.exceptions import RegexPatternException
 from fast_tornado.exceptions import NonstringTypeHasPatternException
+from fast_tornado.exceptions import ExceedMaximumException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [

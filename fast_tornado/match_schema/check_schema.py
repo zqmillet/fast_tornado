@@ -15,6 +15,7 @@ from fast_tornado.exceptions import InvalidPropertyException
 from fast_tornado.exceptions import DependenciesException
 from fast_tornado.exceptions import RegexPatternException
 from fast_tornado.exceptions import NonstringTypeHasPatternException
+from fast_tornado.exceptions import ExceedMaximumException
 
 TYPES = {
     'int': int,
@@ -171,6 +172,26 @@ def __check_validation(schema):
     if str not in schema['type'] and 'pattern' in schema:
         raise NonstringTypeHasPatternException(schema=schema)
 
+def __check_maximum(data, schema, name):
+    if not 'maximum' in schema:
+        return
+
+    maximum = schema['maximum']
+    
+    exclusive_maximum = schema.get('exclusive_maximum', False)
+    if exclusive_maximum:
+        comparison_operation = lambda x, y: x <= y
+    else:
+        comparison_operation = lambda x, y: x < y
+
+    if not comparison_operation(data, maximum):
+        raise ExceedMaximumException(
+            name=name,
+            exclusive_maximum=exclusive_maximum,
+            data=data,
+            maximum=maximum
+        )
+
 
 def __check_schema(schema, data, name='data'):
     __initialize_types(schema)
@@ -183,6 +204,7 @@ def __check_schema(schema, data, name='data'):
     __check_items(data, schema, name)
     __check_enumeration(data, schema, name)
     __check_pattern(data, schema, name)
+    __check_maximum(data, schema, name)
 
 def check_schema(schema, data, name='data'):
     """

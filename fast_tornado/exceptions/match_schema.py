@@ -130,3 +130,19 @@ class NonstringTypeHasPatternException(SchemaException):
                 schema=schema
             )
         )
+
+class ExceedMaximumException(SchemaException):
+    """
+    description: if the data exceeds the maximum, raise this exception.
+    """
+    def __init__(self, data, maximum, exclusive_maximum, name):
+        operator = '<' if exclusive_maximum else '<='
+        super().__init__(
+            '{name} = {data}, which should {operator} {maximum}'.format(
+                name=name,
+                data=repr(data),
+                operator=operator,
+                maximum=maximum
+            )
+        )
+
