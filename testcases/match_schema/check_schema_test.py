@@ -17,6 +17,7 @@ from fast_tornado.exceptions import DependenciesException
 from fast_tornado.exceptions import RegexPatternException
 from fast_tornado.exceptions import NonstringTypeHasPatternException
 from fast_tornado.exceptions import ExceedMaximumException
+from fast_tornado.exceptions import ExceedMinimumException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -916,6 +917,87 @@ def test_maximum_without_exception(data, schema):
 )
 def test_maximum_with_exception(data, schema, exception_message):
     with pytest.raises(ExceedMaximumException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: int
+            minimum: 0
+            ''',
+            0
+        ],
+        [
+            '''
+            type: float
+            minimum: 10
+            ''',
+            10.0
+        ],
+        [
+            '''
+            type: float
+            minimum: 10
+            exclusive_minimum: true
+            ''',
+            19.2
+        ],
+        [
+            '''
+            type: float
+            minimum: 10
+            exclusive_minimum: false
+            ''',
+            10.0
+        ]
+    ]
+)
+def test_minimum_without_exception(data, schema):
+    check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: int
+            minimum: 10
+            ''',
+            1,
+            'data = 1, which should >= 10'
+        ],
+        [
+            '''
+            type: float
+            minimum: 0
+            ''',
+            -1.2,
+            'data = -1.2, which should >= 0'
+        ],
+        [
+            '''
+            type: int
+            minimum: 10
+            exclusive_minimum: true
+            ''',
+            10,
+            'data = 10, which should > 10'
+        ],
+        [
+            '''
+            type: [int, float]
+            minimum: 9
+            exclusive_minimum: false
+            ''',
+            -10,
+            'data = -10, which should >= 9'
+        ]
+    ]
+)
+def test_minimum_with_exception(data, schema, exception_message):
+    with pytest.raises(ExceedMinimumException) as execution_information:
         check_schema(schema, data)
 
     assert str(execution_information.value) == exception_message

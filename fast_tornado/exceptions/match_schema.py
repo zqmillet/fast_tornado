@@ -146,3 +146,17 @@ class ExceedMaximumException(SchemaException):
             )
         )
 
+class ExceedMinimumException(SchemaException):
+    """
+    description: if the data exceeds the minimum, raise this exception.
+    """
+    def __init__(self, data, minimum, exclusive_minimum, name):
+        operator = '>' if exclusive_minimum else '>='
+        super().__init__(
+            '{name} = {data}, which should {operator} {minimum}'.format(
+                name=name,
+                data=repr(data),
+                operator=operator,
+                minimum=minimum
+            )
+        )

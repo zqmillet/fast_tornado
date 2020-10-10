@@ -16,6 +16,7 @@ from fast_tornado.exceptions import DependenciesException
 from fast_tornado.exceptions import RegexPatternException
 from fast_tornado.exceptions import NonstringTypeHasPatternException
 from fast_tornado.exceptions import ExceedMaximumException
+from fast_tornado.exceptions import ExceedMinimumException
 
 TYPES = {
     'int': int,
@@ -177,7 +178,7 @@ def __check_maximum(data, schema, name):
         return
 
     maximum = schema['maximum']
-    
+
     exclusive_maximum = schema.get('exclusive_maximum', False)
     if exclusive_maximum:
         check = lambda x, y: x < y
@@ -192,6 +193,25 @@ def __check_maximum(data, schema, name):
             maximum=maximum
         )
 
+def __check_minimum(data, schema, name):
+    if not 'minimum' in schema:
+        return
+
+    minimum = schema['minimum']
+
+    exclusive_minimum = schema.get('exclusive_minimum', False)
+    if exclusive_minimum:
+        check = lambda x, y: x > y
+    else:
+        check = lambda x, y: x >= y
+
+    if not check(data, minimum):
+        raise ExceedMinimumException(
+            name=name,
+            exclusive_minimum=exclusive_minimum,
+            data=data,
+            minimum=minimum
+        )
 
 def __check_schema(schema, data, name='data'):
     __initialize_types(schema)
@@ -205,6 +225,7 @@ def __check_schema(schema, data, name='data'):
     __check_enumeration(data, schema, name)
     __check_pattern(data, schema, name)
     __check_maximum(data, schema, name)
+    __check_minimum(data, schema, name)
 
 def check_schema(schema, data, name='data'):
     """

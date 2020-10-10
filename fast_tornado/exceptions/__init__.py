@@ -15,3 +15,4 @@ from .match_schema import DependenciesException
 from .match_schema import RegexPatternException
 from .match_schema import NonstringTypeHasPatternException
 from .match_schema import ExceedMaximumException
+from .match_schema import ExceedMinimumException
