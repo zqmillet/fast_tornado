@@ -12,13 +12,13 @@
 ## todo list
 
 - [ ] `check_schema`
-  - [x] `type`
-  - [x] `assertion`
-  - [x] `items`
-  - [x] `properties`
-  - [x] `enumeration`
-  - [x] `maximum` / `exclusive_maximum`
-  - [x] `minimum` / `exclusive_minimum`
-  - [ ] `maximum_length`
-  - [ ] `mimimum_length`
+    - [x] `type`
+    - [x] `assertion`
+    - [x] `items`
+    - [x] `properties`
+    - [x] `enumeration`
+    - [x] `maximum` / `exclusive_maximum`
+    - [x] `minimum` / `exclusive_minimum`
+    - [ ] `maximum_length`
+    - [ ] `mimimum_length`
 - [x] `Logger`
