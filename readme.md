@@ -8,3 +8,17 @@
 - [![codecov](https://codecov.io/gh/zqmillet/fast_tornado/branch/master/graph/badge.svg)](https://codecov.io/gh/zqmillet/fast_tornado)
 
 `fast_tornado` help you to build your micro services faster and faster.
+
+## todo list
+
+- [ ] `check_schema`
+  - [x] `type`
+  - [x] `assertion`
+  - [x] `items`
+  - [x] `properties`
+  - [x] `enumeration`
+  - [x] `maximum` / `exclusive_maximum`
+  - [x] `minimum` / `exclusive_minimum`
+  - [ ] `maximum_length`
+  - [ ] `mimimum_length`
+- [x] `Logger`
