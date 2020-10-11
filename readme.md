@@ -21,4 +21,7 @@
     - [x] `minimum` / `exclusive_minimum`
     - [ ] `maximum_length`
     - [ ] `mimimum_length`
+    - [ ] `multiple_of`
+    - [ ] `dependencies`
+    - [ ] `additional_properties`
 - [x] `Logger`
