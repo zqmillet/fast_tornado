@@ -18,6 +18,7 @@ from fast_tornado.exceptions import RegexPatternException
 from fast_tornado.exceptions import NonstringTypeHasPatternException
 from fast_tornado.exceptions import ExceedMaximumException
 from fast_tornado.exceptions import ExceedMinimumException
+from fast_tornado.exceptions import LengthRangeException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -1010,8 +1011,113 @@ def test_minimum_with_exception(data, schema, exception_message):
             maximum_length: 10
             ''',
             ''
+        ],
+        [
+            '''
+            type: list
+            maximum_length: 10
+            ''',
+            list()
+        ],
+        [
+            '''
+            type: list
+            maximum_length: 10
+            ''',
+            [1, 2, 3]
+        ],
+        [
+            '''
+            type: dict
+            maximum_length: 10
+            ''',
+            dict()
+        ],
+        [
+            '''
+            type: dict
+            maximum_length: 10
+            ''',
+            {'x': 1, 'y': 3}
+        ],
+        [
+            '''
+            type: [dict, int]
+            maximum_length: 1
+            ''',
+            12345
         ]
     ]
 )
 def test_maximum_minimum_length_without_exception(data, schema):
     check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: str
+            maximum_length: 10
+            ''',
+            '1234567890abc',
+            "data = '1234567890abc', its length is 13, but it should between 0 and 10"
+        ],
+        [
+            '''
+            type: str
+            minimum_length: 10
+            ''',
+            '123',
+            "data = '123', its length is 3, but it should between 10 and inf"
+        ],
+        [
+            '''
+            type: list
+            minimum_length: 10
+            ''',
+            [],
+            "data = [], its length is 0, but it should between 10 and inf"
+        ],
+        [
+            '''
+            type: list
+            maximum_length: 4
+            minimum_length: 2
+            ''',
+            [],
+            "data = [], its length is 0, but it should between 2 and 4"
+        ],
+        [
+            '''
+            type: list
+            maximum_length: 4
+            minimum_length: 2
+            ''',
+            [1],
+            "data = [1], its length is 1, but it should between 2 and 4"
+        ],
+        [
+            '''
+            type: list
+            maximum_length: 4
+            minimum_length: 2
+            ''',
+            [1, 2, 3, 4, 5],
+            "data = [1, 2, 3, 4, 5], its length is 5, but it should between 2 and 4"
+        ],
+        [
+            '''
+            type: tuple
+            maximum_length: 4
+            minimum_length: 2
+            ''',
+            (1, 2, 3, 4, 5),
+            "data = (1, 2, 3, 4, 5), its length is 5, but it should between 2 and 4"
+        ]
+    ]
+)
+def test_maximum_minimum_length_with_exception(data, schema, exception_message):
+    with pytest.raises(LengthRangeException) as execution_information:
+        check_schema(schema, data)
+
+    assert exception_message == str(execution_information.value)

@@ -5,6 +5,7 @@ description: this module provides the function check_schema.
 import re
 import math
 import importlib
+import collections.abc
 import yaml
 
 from fast_tornado.exceptions import TypeMismatchException
@@ -27,6 +28,7 @@ TYPES = {
     'dict': dict,
     'set': set,
     'list': list,
+    'tuple': tuple,
     'any': object,
     'None': type(None),
 }
@@ -216,18 +218,14 @@ def __check_minimum(data, schema, name):
         )
 
 def __check_length(data, schema, name):
-    if not hasattr(data, '__len__'):
+    if not isinstance(data, collections.abc.Sized):
         return
 
     minimum_length = schema.get('minimum_length', 0)
     maximum_length = schema.get('maximum_length', math.inf)
 
-    try:
-        if minimum_length <= len(data) <= maximum_length:
-            return
-    except BaseException as exception:
-        import pdb; pdb.set_trace()
-        print(exception)
+    if minimum_length <= len(data) <= maximum_length:
+        return
 
     raise LengthRangeException(
         name=name,
