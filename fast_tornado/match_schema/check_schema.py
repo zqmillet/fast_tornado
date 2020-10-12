@@ -3,6 +3,7 @@ description: this module provides the function check_schema.
 """
 
 import re
+import math
 import importlib
 import yaml
 
@@ -17,6 +18,7 @@ from fast_tornado.exceptions import RegexPatternException
 from fast_tornado.exceptions import NonstringTypeHasPatternException
 from fast_tornado.exceptions import ExceedMaximumException
 from fast_tornado.exceptions import ExceedMinimumException
+from fast_tornado.exceptions import LengthRangeException
 
 TYPES = {
     'int': int,
@@ -213,6 +215,27 @@ def __check_minimum(data, schema, name):
             minimum=minimum
         )
 
+def __check_length(data, schema, name):
+    if not hasattr(data, '__len__'):
+        return
+
+    minimum_length = schema.get('minimum_length', 0)
+    maximum_length = schema.get('maximum_length', math.inf)
+
+    try:
+        if minimum_length <= len(data) <= maximum_length:
+            return
+    except BaseException as exception:
+        import pdb; pdb.set_trace()
+        print(exception)
+
+    raise LengthRangeException(
+        name=name,
+        data=data,
+        maximum_length=maximum_length,
+        minimum_length=minimum_length
+    )
+
 def __check_schema(schema, data, name='data'):
     __initialize_types(schema)
     __initialize_assertion(schema)
@@ -226,6 +249,7 @@ def __check_schema(schema, data, name='data'):
     __check_pattern(data, schema, name)
     __check_maximum(data, schema, name)
     __check_minimum(data, schema, name)
+    __check_length(data, schema, name)
 
 def check_schema(schema, data, name='data'):
     """

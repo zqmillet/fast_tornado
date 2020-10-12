@@ -160,3 +160,19 @@ class ExceedMinimumException(SchemaException):
                 minimum=minimum
             )
         )
+
+class LengthRangeException(SchemaException):
+    """
+    description: if the length of data is wrong, raise this exception.
+    """
+    def __init__(self, data, mininum_length, maximum_length, name):
+        super().__init__(
+            '{name} = {data}, its length is {length}, but it should '
+            'between {mininum_length} and {maximum_length}'.format(
+                name=name,
+                data=repr(data),
+                length=len(data),
+                maximum_length=maximum_length,
+                mininum_length=mininum_length
+            )
+        )

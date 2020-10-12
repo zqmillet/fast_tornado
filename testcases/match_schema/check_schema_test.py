@@ -1001,3 +1001,17 @@ def test_minimum_with_exception(data, schema, exception_message):
         check_schema(schema, data)
 
     assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: str
+            maximum_length: 10
+            ''',
+            ''
+        ]
+    ]
+)
+def test_maximum_minimum_length_without_exception(data, schema):
+    check_schema(schema, data)
