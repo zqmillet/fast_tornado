@@ -19,8 +19,8 @@
     - [x] `enumeration`
     - [x] `maximum` / `exclusive_maximum`
     - [x] `minimum` / `exclusive_minimum`
-    - [ ] `maximum_length`
-    - [ ] `mimimum_length`
+    - [x] `maximum_length`
+    - [x] `mimimum_length`
     - [ ] `multiple_of`
     - [ ] `dependencies`
     - [ ] `additional_properties`
