@@ -19,6 +19,7 @@ from fast_tornado.exceptions import NonstringTypeHasPatternException
 from fast_tornado.exceptions import ExceedMaximumException
 from fast_tornado.exceptions import ExceedMinimumException
 from fast_tornado.exceptions import LengthRangeException
+from fast_tornado.exceptions import MultipleOfException
 
 @pytest.mark.parametrize(
     'schema, data, exception', [
@@ -1121,3 +1122,65 @@ def test_maximum_minimum_length_with_exception(data, schema, exception_message):
         check_schema(schema, data)
 
     assert exception_message == str(execution_information.value)
+
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: int
+            multiple_of: 10
+            ''',
+            0
+        ],
+        [
+            '''
+            type: int
+            multiple_of: 10
+            ''',
+            10
+        ],
+        [
+            '''
+            type: int
+            multiple_of: 11111111 
+            ''',
+            9999999999999999
+        ]
+    ]
+)
+def test_multiple_of_without_exception(data, schema):
+    check_schema(schema, data)
+
+@pytest.mark.parametrize(
+    'schema, data, exception_message', [
+        [
+            '''
+            type: int
+            multiple_of: 10
+            ''',
+            5,
+            'data = 5, should be multiple of 10, but it is not'
+        ],
+        [
+            '''
+            type: int
+            multiple_of: 3
+            ''',
+            10,
+            'data = 10, should be multiple of 3, but it is not'
+        ],
+        [
+            '''
+            type: int
+            multiple_of: 11111111 
+            ''',
+            99999999999999,
+            'data = 99999999999999, should be multiple of 11111111, but it is not'
+        ]
+    ]
+)
+def test_multiple_of_with_exception(data, schema, exception_message):
+    with pytest.raises(MultipleOfException) as execution_information:
+        check_schema(schema, data)
+
+    assert str(execution_information.value) == exception_message

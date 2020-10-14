@@ -17,3 +17,4 @@ from .match_schema import NonstringTypeHasPatternException
 from .match_schema import ExceedMaximumException
 from .match_schema import ExceedMinimumException
 from .match_schema import LengthRangeException
+from .match_schema import MultipleOfException

@@ -20,6 +20,7 @@ from fast_tornado.exceptions import NonstringTypeHasPatternException
 from fast_tornado.exceptions import ExceedMaximumException
 from fast_tornado.exceptions import ExceedMinimumException
 from fast_tornado.exceptions import LengthRangeException
+from fast_tornado.exceptions import MultipleOfException
 
 TYPES = {
     'int': int,
@@ -234,6 +235,20 @@ def __check_length(data, schema, name):
         minimum_length=minimum_length
     )
 
+def __check_multiple_of(data, schema, name):
+    if not 'multiple_of' in schema:
+        return
+
+    multiple_of = schema['multiple_of']
+    if not data % multiple_of:
+        return
+
+    raise MultipleOfException(
+        name=name,
+        data=data,
+        multiple_of=multiple_of
+    )
+
 def __check_schema(schema, data, name='data'):
     __initialize_types(schema)
     __initialize_assertion(schema)
@@ -248,6 +263,7 @@ def __check_schema(schema, data, name='data'):
     __check_maximum(data, schema, name)
     __check_minimum(data, schema, name)
     __check_length(data, schema, name)
+    __check_multiple_of(data, schema, name)
 
 def check_schema(schema, data, name='data'):
     """

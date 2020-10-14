@@ -176,3 +176,17 @@ class LengthRangeException(SchemaException):
                 minimum_length=minimum_length
             )
         )
+
+class MultipleOfException(SchemaException):
+    """
+    description: if the data is not multiple of multiple_of field, raise this exception.
+    """
+
+    def __init__(self, data, name, multiple_of):
+        super().__init__(
+            '{name} = {data}, should be multiple of {multiple_of}, but it is not'.format(
+                name=name,
+                data=repr(data),
+                multiple_of=multiple_of
+            )
+        )
