@@ -1184,3 +1184,85 @@ def test_multiple_of_with_exception(data, schema, exception_message):
         check_schema(schema, data)
 
     assert str(execution_information.value) == exception_message
+
+@pytest.mark.parametrize(
+    'schema, data, exception_type, exception_message', [
+        [
+            '''
+            type: list
+            items:
+                - type: int
+            ''',
+            [1, 2],
+            LengthRangeException,
+            'data = [1, 2], its length is 2, but it should between 1 and 1'
+        ],
+        [
+            '''
+            type: list
+            items:
+                - type: int
+                - type: float
+            ''',
+            [1, 2],
+            TypeMismatchException,
+            'data[1] = 2, but its type should be float'
+        ],
+        [
+            '''
+            type: list
+            items:
+                - type: int
+                - type: [float, int]
+            ''',
+            [1, '2'],
+            TypeMismatchException,
+            "data[1] = '2', but its type should be float, int"
+        ],
+        [
+            '''
+            type: list
+            items:
+                - type: int
+                - type: dict
+                  properties:
+                      x:
+                        type: list
+                        items:
+                            - type: int
+                            - type: str
+                            - type: float
+                            - type: int, float
+            ''',
+            [1, {'x': [1, 2, 3.0, 4]}],
+            TypeMismatchException,
+            "data[1]['x'][1] = 2, but its type should be str"
+        ],
+        [
+            '''
+            type: list
+            items:
+                - type: int
+                - type: dict
+                  properties:
+                      x:
+                        type: list
+                        items:
+                            - type: int
+                            - type: int
+                        dependencies: [y]
+                      y:
+                        type: int
+            ''',
+            [1, {'x': [1, 2]}],
+            DependenciesException,
+            "property 'x' depends on 'y', but 'y' does not in data[1] = {'x': [1, 2]}"
+        ]
+    ]
+)
+def test_list_type_items_with_exception(schema, data, exception_message, exception_type):
+    with pytest.raises(exception_type) as execution_information:
+        check_schema(schema, data)
+
+    assert exception_message == str(execution_information.value)
+

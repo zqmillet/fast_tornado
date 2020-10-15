@@ -137,14 +137,35 @@ def __check_properties(data, schema, name):
             name=name
         )
 
-def __check_items(data, schema, name):
-    if 'items' not in schema:
+def __check_dict_type_items(data, schema, name):
+    items_schema = schema.get('items')
+    if not isinstance(items_schema, dict):
         return
 
     for index, item in enumerate(data):
         __check_schema(
             data=item,
-            schema=schema['items'],
+            schema=items_schema,
+            name='{name}[{index}]'.format(name=name, index=repr(index))
+        )
+
+def __check_list_type_items(data, schema, name):
+    items_schema = schema.get('items')
+    if not isinstance(items_schema, list):
+        return
+
+    if not len(items_schema) == len(data):
+        raise LengthRangeException(
+            name=name,
+            data=data,
+            maximum_length=len(items_schema),
+            minimum_length=len(items_schema)
+        ) 
+
+    for index, (item_schema, item) in enumerate(zip(items_schema, data)):
+        __check_schema(
+            data=item,
+            schema=item_schema,
             name='{name}[{index}]'.format(name=name, index=repr(index))
         )
 
@@ -257,7 +278,8 @@ def __check_schema(schema, data, name='data'):
     __check_type(data, schema, name)
     __check_assertion(data, schema, name)
     __check_properties(data, schema, name)
-    __check_items(data, schema, name)
+    __check_dict_type_items(data, schema, name)
+    __check_list_type_items(data, schema, name)
     __check_enumeration(data, schema, name)
     __check_pattern(data, schema, name)
     __check_maximum(data, schema, name)
