@@ -1266,3 +1266,65 @@ def test_list_type_items_with_exception(schema, data, exception_message, excepti
 
     assert exception_message == str(execution_information.value)
 
+@pytest.mark.parametrize(
+    'schema, data', [
+        [
+            '''
+            type: list
+            items:
+                - type: int
+                - type: int
+                - type: int
+                - type: int
+            ''',
+            [1, 2, 3, 4]
+        ],
+        [
+            '''
+            type: list
+            items:
+                - type: [int, float]
+                - type: [int, float]
+                - type: [int, float]
+                - type: [int, float]
+            ''',
+            [1, 2.0, 3.1, 4]
+        ],
+        [
+            '''
+            type: dict
+            properties:
+                x:
+                    type: list
+                    items:
+                        - type: [int, float]
+                        - type: [int, float]
+                        - type: [int, float]
+                        - type: [int, float]
+            ''',
+            {'x': [1, 2.0, 3.1, 4]}
+        ],
+        [
+            '''
+            type: list
+            items:
+                - type: dict
+                  properties:
+                      a:
+                          type: int
+                - type: dict
+                  properties:
+                      b:
+                          type: int
+                - type: dict
+                  properties:
+                      c:
+                          type: int
+            ''',
+            [{'a': 1}, {'b': 2}, {'c': 3}]
+        ]
+
+    ]
+)
+def test_list_type_items_without_exception(schema, data):
+    check_schema(schema, data)
