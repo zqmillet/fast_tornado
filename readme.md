@@ -14,14 +14,14 @@
 - [ ] `check_schema`
     - [x] `type`
     - [x] `assertion`
-    - [x] `items`
+    - [ ] `items`
     - [x] `properties`
     - [x] `enumeration`
     - [x] `maximum` / `exclusive_maximum`
     - [x] `minimum` / `exclusive_minimum`
     - [x] `maximum_length`
     - [x] `mimimum_length`
-    - [ ] `multiple_of`
+    - [x] `multiple_of`
     - [ ] `dependencies`
     - [ ] `additional_properties`
 - [x] `Logger`
