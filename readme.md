@@ -11,10 +11,12 @@
 
 ## todo list
 
-- [ ] `check_schema`
+- [x] `check_schema`
     - [x] `type`
     - [x] `assertion`
-    - [ ] `items`
+    - [x] `items`
+        - [x] `dict type items`
+        - [x] `list type items`
     - [x] `properties`
     - [x] `enumeration`
     - [x] `maximum` / `exclusive_maximum`
