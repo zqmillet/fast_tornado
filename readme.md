@@ -27,3 +27,6 @@
     - [x] `dependencies`
     - [x] `additional_properties`
 - [x] `Logger`
+- [ ] `RequestHandlerGenerator`
+  - [ ] `ArgumentParser`
+  - [ ] `ArgumentChecker`
