@@ -1,3 +1,7 @@
+"""
+description: this module provides some exceptions about system.
+"""
+
 from .base import FastTornadoBaseException
 
 class CannotFindFileOrDirectoryException(FastTornadoBaseException):
@@ -23,5 +27,3 @@ class InvalidYamlException(FastTornadoBaseException):
     """
     description: if the yaml is invalid, raise this exception.
     """
-    def __init__(self, exception):
-        super().__init__(exception)

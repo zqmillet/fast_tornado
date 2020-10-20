@@ -160,7 +160,7 @@ def __check_list_type_items(data, schema, name):
             data=data,
             maximum_length=len(items_schema),
             minimum_length=len(items_schema)
-        ) 
+        )
 
     for index, (item_schema, item) in enumerate(zip(items_schema, data)):
         __check_schema(

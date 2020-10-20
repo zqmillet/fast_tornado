@@ -1,3 +1,7 @@
+"""
+description: this module provides the function load_yaml.
+"""
+
 import os
 import yaml
 
@@ -9,6 +13,9 @@ from fast_tornado.exceptions import InvalidArgumentsException
 from fast_tornado.exceptions import InvalidYamlException
 
 def load_yaml(*, file_path=None, content=None):
+    """
+    description: this function is used to load yaml from string or file path.
+    """
     if (file_path is None and content is None) or (file_path is not None and content is not None):
         raise InvalidArgumentsException(
             function_name='load_yaml',
@@ -25,4 +32,4 @@ def load_yaml(*, file_path=None, content=None):
     try:
         return yaml.safe_load(content)
     except yaml.error.YAMLError as exception:
-        raise InvalidYamlException(exception)
+        raise InvalidYamlException(exception) from None
