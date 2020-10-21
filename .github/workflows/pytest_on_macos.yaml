@@ -21,4 +21,4 @@ jobs:
     - name: Test with pytest
       run: |
         export PYTHONPATH='.'
-        pytest testcases
+        pytest testcases -vv
