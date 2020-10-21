@@ -1253,6 +1253,7 @@ def test_multiple_of_with_exception(data, schema, exception_message):
                         dependencies: [y]
                       y:
                         type: int
+                        required: false
             ''',
             [1, {'x': [1, 2]}],
             DependenciesException,
