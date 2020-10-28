@@ -4,6 +4,8 @@ import pytest
 
 from fast_tornado.functions import load_yaml
 from fast_tornado.exceptions import InvalidYamlException
+from fast_tornado.exceptions import InvalidArgumentsException
+from fast_tornado.exceptions import CannotFindFileOrDirectoryException
 from fast_tornado.constants import FILE_MODE
 from fast_tornado.constants import ENCODE
 
@@ -120,3 +122,28 @@ def test_load_yaml_from_file_path_with_exception(invalid_yaml_file_path_and_exce
         load_yaml(file_path=file_path)
 
     assert exception_message in str(execution_infomation.value)
+
+def test_invalid_arguments():
+    with pytest.raises(InvalidArgumentsException) as execution_infomation:
+        load_yaml()
+
+    assert 'the arguments of function load_yaml is invalid, you must specify the value for '
+    'argument file_path or content' == str(execution_infomation.value)
+
+@pytest.fixture(scope='function', name='nonexistent_file_path')
+def __nonexistent_file_path():
+    file_path = str(uuid.uuid1())
+
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+    assert not os.path.isfile(file_path)
+    yield file_path
+
+def test_nonexistent_file_path(nonexistent_file_path):
+    with pytest.raises(CannotFindFileOrDirectoryException) as execution_infomation:
+        load_yaml(file_path=nonexistent_file_path)
+
+    assert 'cannot find the file or directory {file_path}'.format(
+        file_path=repr(nonexistent_file_path)
+    ) == str(execution_infomation.value)
+
