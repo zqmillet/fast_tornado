@@ -30,3 +30,6 @@
 - [ ] `RequestHandlerGenerator`
   - [ ] `ArgumentParser`
   - [ ] `ArgumentChecker`
+- [x] `functions`
+  - [x] `wrap_text`
+  - [x] `load_yaml`
