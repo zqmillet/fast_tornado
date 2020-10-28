@@ -22,3 +22,5 @@ from .match_schema import MultipleOfException
 from .system import CannotFindFileOrDirectoryException
 from .system import InvalidArgumentsException
 from .system import InvalidYamlException
+
+from .handler import CannotFindDocumentException
