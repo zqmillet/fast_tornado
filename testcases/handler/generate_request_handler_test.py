@@ -75,6 +75,17 @@ def test_invalid_yaml_exception(function_with_invalid_yaml_document):
         [
             '1',
             "generate_request_handler_test.wrapper.__doc__ = 1, but its type should be dict"
+        ],
+        [
+            'description: this is description',
+            "cannot find 'methods' in generate_request_handler_test.wrapper.__doc__ = {'description': 'this is description'}"
+        ],
+        [
+            '''
+            description: this is description
+            methods: [get]
+            ''',
+            "cannot find 'api_path' in generate_request_handler_test.wrapper.__doc__"
         ]
     ]
 )
@@ -91,4 +102,4 @@ def test_invalid_format_exception(function_with_invalid_format_document_and_reas
         generate_request_handler(function)
 
     print(execution_infomation.value)
-    assert str(execution_infomation.value) == reason
+    assert reason in str(execution_infomation.value)
