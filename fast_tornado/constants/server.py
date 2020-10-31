@@ -1,3 +1,7 @@
+"""
+description: this module provides some constants about server.
+"""
+
 DOCUMENT_SCHEMA = '''
 type: dict
 properties:
@@ -13,9 +17,12 @@ properties:
         type: str
     arguments:
         type: list
+        required: false
         items:
             type: dict
             properties:
+                name:
+                    type: str
                 type:
                     type: str
                 from:

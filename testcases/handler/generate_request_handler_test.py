@@ -86,6 +86,66 @@ def test_invalid_yaml_exception(function_with_invalid_yaml_document):
             methods: [get]
             ''',
             "cannot find 'api_path' in generate_request_handler_test.wrapper.__doc__"
+        ],
+        [
+            '''
+            description: this is description
+            methods: [get]
+            api_path: /test
+            return: null
+            ''',
+            "generate_request_handler_test.wrapper.__doc__['return'] = None, but its type should be dict"
+        ],
+        [
+            '''
+            description: this is description
+            methods: [get]
+            api_path: /test
+            return:
+                description: this is return
+            ''',
+            "cannot find 'type' in generate_request_handler_test.wrapper.__doc__['return']"
+        ],
+        [
+            '''
+            description: this is description
+            methods: [get]
+            api_path: /test
+            arguments:
+            return:
+                description: this is return
+                type: str
+            ''',
+            "generate_request_handler_test.wrapper.__doc__['arguments'] = None, but its type should be list"
+        ],
+        [
+            '''
+            description: this is description
+            methods: [get]
+            api_path: /test
+            arguments:
+                - name: x
+                  type: str
+            return:
+                description: this is return
+                type: str
+            ''',
+            "cannot find 'from' in generate_request_handler_test.wrapper.__doc__['arguments'][0]"
+        ],
+        [
+            '''
+            description: this is description
+            methods: [get]
+            api_path: /test
+            arguments:
+                - name: x
+                  type: str
+                  from: haha
+            return:
+                description: this is return
+                type: str
+            ''',
+            "['arguments'][0]['from'] = 'haha', does not in enumeration ['query', 'path', 'body', 'header', 'entire_body']"
         ]
     ]
 )
