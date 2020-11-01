@@ -77,13 +77,18 @@ def test_invalid_yaml_exception(function_with_invalid_yaml_document):
             "generate_request_handler_test.wrapper.__doc__ = 1, but its type should be dict"
         ],
         [
-            'description: this is description',
-            "cannot find 'methods' in generate_request_handler_test.wrapper.__doc__ = {'description': 'this is description'}"
+            '''
+            description: this is description,
+            api_path:
+            return:
+            ''',
+            "cannot find 'methods' in generate_request_handler_test.wrapper.__doc__"
         ],
         [
             '''
             description: this is description
             methods: [get]
+            return:
             ''',
             "cannot find 'api_path' in generate_request_handler_test.wrapper.__doc__"
         ],
