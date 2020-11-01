@@ -81,6 +81,8 @@ def test_invalid_yaml_exception(function_with_invalid_yaml_document):
             description: this is description,
             api_path:
             return:
+                description: this is return.
+                type: any
             ''',
             "cannot find 'methods' in generate_request_handler_test.wrapper.__doc__"
         ],
@@ -88,7 +90,9 @@ def test_invalid_yaml_exception(function_with_invalid_yaml_document):
             '''
             description: this is description
             methods: [get]
-            return:
+            return: 
+                description: this is return.
+                type: any
             ''',
             "cannot find 'api_path' in generate_request_handler_test.wrapper.__doc__"
         ],
