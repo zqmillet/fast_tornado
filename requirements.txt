@@ -2,3 +2,4 @@ pytest
 PyYAML
 pylint
 pytest-cov
+tornado
