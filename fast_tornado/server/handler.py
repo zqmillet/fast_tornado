@@ -3,6 +3,7 @@ description: this module provides the function generate_request_handler.
 """
 
 import types
+import tornado
 
 from fast_tornado.functions import load_yaml
 from fast_tornado.match_schema import check_schema
@@ -26,13 +27,13 @@ def generate_request_handler(function):
     if function.__doc__ is None:
         raise CannotFindDocumentException(function)
 
-    try:
-        document = load_yaml(content=function.__doc__)
-    except InvalidYamlException as exception:
-        raise exception from None
+    document = load_yaml(content=function.__doc__)
 
     check_schema(
         schema=DOCUMENT_SCHEMA,
         data=document,
         name='{name}.__doc__'.format(name='.'.join([function.__module__, function.__name__]))
     )
+
+    class RequestHandler(tornado.web.RequestHandler):
+        pass
