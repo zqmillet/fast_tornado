@@ -79,7 +79,7 @@ def test_invalid_yaml_exception(function_with_invalid_yaml_document):
         [
             '''
             description: this is description,
-            api_path:
+            api_path: /test
             return:
                 description: this is return.
                 type: any
