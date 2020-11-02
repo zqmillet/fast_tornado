@@ -4,6 +4,7 @@ description: this module provides the function generate_request_handler.
 
 import types
 import tornado
+import inspect
 
 from fast_tornado.functions import load_yaml
 from fast_tornado.match_schema import check_schema
@@ -11,7 +12,31 @@ from fast_tornado.match_schema import check_schema
 from fast_tornado.exceptions import CannotFindDocumentException
 from fast_tornado.exceptions import TypeMismatchException
 from fast_tornado.exceptions import InvalidYamlException
+from fast_tornado.exceptions import CannotFindArgumentSchemaException
+from fast_tornado.exceptions import UnknownArgumentSchemaException
+
 from fast_tornado.constants import DOCUMENT_SCHEMA
+
+def check_arguments_field(function, document):
+    """
+    description: this function is used to check whether arguments field is valid.
+    """
+    signature = inspect.signature(function)
+    argument_names = {item['name'] for item in document.get('arguments', list())}
+
+    missing_argument_names = sorted(signature.parameters.keys() - argument_names)
+    if missing_argument_names:
+        raise CannotFindArgumentSchemaException(
+            missing_argument_names=missing_argument_names,
+            function=function
+        )
+
+    unknown_argument_names = sorted(argument_names - signature.parameters.keys())
+    if unknown_argument_names:
+        raise UnknownArgumentSchemaException(
+            unknown_argument_names=unknown_argument_names,
+            function=function
+        )
 
 def generate_request_handler(function):
     """
@@ -35,5 +60,7 @@ def generate_request_handler(function):
         name='{name}.__doc__'.format(name='.'.join([function.__module__, function.__name__]))
     )
 
-    class RequestHandler(tornado.web.RequestHandler):
-        pass
+    check_arguments_field(
+        function=function,
+        document=document
+    )

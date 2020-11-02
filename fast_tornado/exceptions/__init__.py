@@ -24,3 +24,5 @@ from .system import InvalidArgumentsException
 from .system import InvalidYamlException
 
 from .handler import CannotFindDocumentException
+from .handler import CannotFindArgumentSchemaException
+from .handler import UnknownArgumentSchemaException
