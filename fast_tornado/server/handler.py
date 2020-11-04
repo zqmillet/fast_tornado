@@ -38,17 +38,7 @@ def check_arguments_field(function, document):
             function=function
         )
 
-def generate_request_handler(function):
-    """
-    description: this function is used to wrap a function to a request handler.
-    """
-    if not isinstance(function, types.FunctionType):
-        raise TypeMismatchException(
-            data=function,
-            expected_types=[types.FunctionType],
-            name='function'
-        )
-
+def get_document(function):
     if function.__doc__ is None:
         raise CannotFindDocumentException(function)
 
@@ -64,3 +54,18 @@ def generate_request_handler(function):
         function=function,
         document=document
     )
+
+    return document
+
+def generate_request_handler(function):
+    """
+    description: this function is used to wrap a function to a request handler.
+    """
+    if not isinstance(function, types.FunctionType):
+        raise TypeMismatchException(
+            data=function,
+            expected_types=[types.FunctionType],
+            name='function'
+        )
+
+    document = get_document(function)
