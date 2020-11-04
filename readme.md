@@ -28,6 +28,7 @@
     - [x] `additional_properties`
 - [x] `Logger`
 - [ ] `RequestHandlerGenerator`
+  - [x] `DocumentChecker`
   - [ ] `ArgumentParser`
   - [ ] `ArgumentChecker`
 - [x] `functions`
