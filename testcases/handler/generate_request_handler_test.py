@@ -267,3 +267,9 @@ def test_invalid_arguments_field_exception(function_with_invalid_arguments_field
         generate_request_handler(function)
 
     assert reason == str(execution_infomation.value)
+
+def test_generate_request_handler(application):
+    import requests
+
+    response = requests.get('http://localhost:8000/test?x=3')
+    print(response)

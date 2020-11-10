@@ -3,7 +3,7 @@ description: this module provides the function generate_request_handler.
 """
 
 import types
-import tornado
+import tornado.web
 import inspect
 
 from fast_tornado.functions import load_yaml
@@ -39,6 +39,11 @@ def check_arguments_field(function, document):
         )
 
 def get_document(function):
+    """
+    description: |
+        this function is used to get document of the function.
+        if there are something wrong with the document, raise exception.
+    """
     if function.__doc__ is None:
         raise CannotFindDocumentException(function)
 
@@ -57,6 +62,7 @@ def get_document(function):
 
     return document
 
+
 def generate_request_handler(function):
     """
     description: this function is used to wrap a function to a request handler.
@@ -69,3 +75,9 @@ def generate_request_handler(function):
         )
 
     document = get_document(function)
+
+    class RequestHandler(tornado.web.RequestHandler):
+        def get(self, *args, **kwargs):
+            import pdb; pdb.set_trace()
+
+    return RequestHandler
