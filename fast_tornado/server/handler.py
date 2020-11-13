@@ -62,6 +62,8 @@ def get_document(function):
 
     return document
 
+def parse_argument(document, handler, args, kwargs):
+    import pdb; pdb.set_trace()
 
 def generate_request_handler(function):
     """
@@ -78,6 +80,7 @@ def generate_request_handler(function):
 
     class RequestHandler(tornado.web.RequestHandler):
         def get(self, *args, **kwargs):
-            import pdb; pdb.set_trace()
+            arguments = parse_argument(document=document,handler=self, args=args, kwargs=kwargs)
+            self.write('')
 
     return RequestHandler
