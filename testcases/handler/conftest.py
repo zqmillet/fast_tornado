@@ -1,5 +1,8 @@
 import pytest
+import asyncio
+import threading
 import tornado.web
+import tornado.ioloop
 
 from fast_tornado.server import generate_request_handler
 
@@ -18,15 +21,25 @@ def function(x):
     """
     return x
 
-
-@pytest.fixture(scope='function', name='application')
-def __application():
+def get_application(function, api_path, port):
     request_handler = generate_request_handler(function)
     application = tornado.web.Application(
         [
-            ('/test', request_handler)
+            (api_path, request_handler)
         ]
     )
-    application.listen(8000)
-    return application
-    
+    application.listen(port)
+    tornado.ioloop.IOLoop.instance().start()
+
+@pytest.fixture(scope='function', name='application')
+def __application():
+    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+    asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
+
+    thread = threading.Thread(target=get_application, args=(function, '/test', 8000))
+    thread.daemon = True
+    thread.start()
+    yield {
+        'api_path': '/test',
+        'port': '8000'
+    }
