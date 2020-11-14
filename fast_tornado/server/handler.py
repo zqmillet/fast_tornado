@@ -80,7 +80,7 @@ def generate_request_handler(function):
 
     class RequestHandler(tornado.web.RequestHandler):
         def get(self, *args, **kwargs):
-            arguments = parse_argument(document=document,handler=self, args=args, kwargs=kwargs)
+            arguments = parse_argument(document=document, handler=self, args=args, kwargs=kwargs)
             self.write('')
 
     return RequestHandler
